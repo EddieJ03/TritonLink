@@ -108,8 +108,22 @@
                             // Close the Connection
                             conn.close();
                         } catch (SQLException sqle) {
+                            // Close the ResultSet
+                            rs.close();
+                            // Close the Statement
+                            statement.close();
+                            // Close the Connection
+                            conn.close();
+
                             out.println(sqle.getMessage());
                         } catch (Exception e) {
+                            // Close the ResultSet
+                            rs.close();
+                            // Close the Statement
+                            statement.close();
+                            // Close the Connection
+                            conn.close();
+                            
                             out.println(e.getMessage());
                         }
                     %>
