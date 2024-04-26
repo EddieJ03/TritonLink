@@ -22,53 +22,64 @@
                                     "edward" // CHANGE THIS TO YOUR PASSWORD
                             );
 
-                            // Use the connection...
-                            System.out.println("Connected to PostgreSQL database!");
-                            // Remember to close the connection when done.
-                            conn.close();
-                        } catch (SQLException e) {
-                            System.out.println("Connection failed. Check output console.");
-                            e.printStackTrace();
-                            return;
-                        }
-                    %>
-                    <%
-                        try {
                             String action = request.getParameter("action");
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(
-                                ("INSERT INTO Student VALUES (?, ?, ?, ?, ?)"));
-                                pstmt.setInt(1,Integer.parseInt(request.getParameter("SSN")));
-                                pstmt.setString(2, request.getParameter("ID"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?::residency_enum)"));
+                                
+                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(2, request.getParameter("first_name"));
+                                pstmt.setString(3, request.getParameter("middle_name"));
+                                pstmt.setString(4, request.getParameter("last_name"));
+                                pstmt.setString(5, request.getParameter("ssn"));
+                            
+                                if(request.getParameter("enrolled") != null)
+                                    pstmt.setBoolean(6, true);
+                                else
+                                    pstmt.setBoolean(6, false);
+
+                                pstmt.setString(7, request.getParameter("residency"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+
                             // Create the statement
                             Statement statement = conn.createStatement();
+
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
                             ResultSet rs = statement.executeQuery("SELECT * FROM student");
                     %>
                     <table>
                         <tr>
-                            <th>SSN</th>
+                            <th>PID</th>
                             <th>First</th>
+                            <th>Middle</th>
                             <th>Last</th>
-                            <th>College</th>
+                            <th>SSN</th>
+                            <th>Enrolled</th>
+                            <th>Residency</th>
                         </tr>
                         <tr>
                             <form action="students.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="SSN" size="10"></th>
-                                <th><input value="" name="ID" size="10"></th>
-                                <th><input value="" name="FIRSTNAME" size="15"></th>
-                                <th><input value="" name="LASTNAME" size="15"></th>
-                                <th><input value="" name="COLLEGE" size="15"></th>
+                                <th><input value="" name="PID" size="10"></th>
+                                <th><input value="" name="first_name" size="15"></th>
+                                <th><input value="" name="middle_name" size="15"></th>
+                                <th><input value="" name="last_name" size="15"></th>
+                                <th><input value="" name="ssn" size="10"></th>
+                                <th><input type="checkbox" value="true" name="enrolled" size="10"></th>
+                                <th>
+                                    <select name="residency" id="residency">
+                                        <option value="California">California</option>
+                                        <option value="International">International</option>
+                                        <option value="Non-CA US">Non-CA US</option>
+                                    </select>
+                                </th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -77,22 +88,18 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <%-- Get the SSN, which is a number --%>
-                                <td><%= rs.getInt("SSN") %></td>
-                                <%-- Get the ID --%>
-                                <td><%= rs.getString("ID") %></td>
-                                <%-- Get the FIRSTNAME --%>
-                                <td><%= rs.getString("FIRSTNAME") %></td>
-                                <%-- Get the LASTNAME --%>
-                                <td><%= rs.getString("LASTNAME") %></td>
-                                <%-- Get the COLLEGE --%>
-                                <td><%= rs.getString("COLLEGE") %></td>
+                                <td><%= rs.getString("PID") %></td>
+                                <td><%= rs.getString("first_name") %></td>
+                                <td><%= rs.getString("middle_name") %></td>
+                                <td><%= rs.getString("last_name") %></td>
+                                <td><%= rs.getInt("ssn") %></td>
+                                <td><%= rs.getString("enrolled") %></td>
+                                <td><%= rs.getString("residency") %></td>
                             </tr>
                         <%
                             }
                         %>
                     </table>
-                    
                     <%
                             // Close the ResultSet
                             rs.close();
