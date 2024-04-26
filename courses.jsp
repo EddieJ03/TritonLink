@@ -17,7 +17,7 @@
                         // Make a connection to the PostgreSQL datasource
                         try {
                             Connection conn = DriverManager.getConnection(
-                                    "jdbc:postgresql://localhost:5432/postgres", // JDBC URL for PostgreSQL (/postgres is the database so may need to change on your end)
+                                    "jdbc:postgresql://localhost:5432/cse132b", // JDBC URL for PostgreSQL (/postgres is the database so may need to change on your end)
                                     "postgres", // Database username
                                     "edward" // CHANGE THIS TO YOUR PASSWORD
                             );
