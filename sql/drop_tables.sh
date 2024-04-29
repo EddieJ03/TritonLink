@@ -1,0 +1,1 @@
+psql -d postgresql://postgres:edward@localhost:5432/cse132b -f drop_tables.sql

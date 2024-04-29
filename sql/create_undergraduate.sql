@@ -1,4 +1,4 @@
-CREATE TYPE college_enum AS ENUM ('Warren', 'Muir', 'Sixth', 'ERC', 'Marshall', 'Revelle', 'Seventh'),
+CREATE TYPE college_enum AS ENUM ('Warren', 'Muir', 'Sixth', 'ERC', 'Marshall', 'Revelle', 'Seventh');
 
 CREATE TABLE undergraduate (
     PID VARCHAR(10) REFERENCES student(PID),

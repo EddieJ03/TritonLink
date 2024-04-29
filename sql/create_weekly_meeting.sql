@@ -1,4 +1,4 @@
-CREATE TYPE meeting_enum AS ENUM ('LE', 'DI', 'Lab Sessions')
+CREATE TYPE meeting_enum AS ENUM ('LE', 'DI', 'Lab Sessions');
 
 CREATE TABLE weekly_meeting (
     section_id VARCHAR(20) REFERENCES classes(section_id),
