@@ -96,7 +96,7 @@
                                 <td><%= rs.getString("first_name") %></td>
                                 <td><%= rs.getString("middle_name") %></td>
                                 <td><%= rs.getString("last_name") %></td>
-                                <td><%= rs.getInt("ssn") %></td>
+                                <td><%= rs.getString("ssn") %></td>
                                 <td><%= rs.getString("enrolled") %></td>
                                 <td><%= rs.getString("residency") %></td>
                             </tr>
