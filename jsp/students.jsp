@@ -69,7 +69,7 @@
                             <th>Residency</th>
                         </tr>
                         <tr>
-                            <form action="jsp/students.jsp" method="get">
+                            <form action="students.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10"></th>
                                 <th><input value="" name="first_name" size="15"></th>
