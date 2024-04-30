@@ -1,7 +1,4 @@
 <%@ page language="java" import="java.sql.*" %>
-<%@ page language="java" import="java.util.*" %>
-<%@ page language="java" import="java.text.*" %>
-
 
 <html>
     <body>
@@ -33,16 +30,10 @@
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Attendance table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO attendance VALUES (?, ?, ?)"));
-
-                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO bsms VALUES (?)"));
+                                
                                 pstmt.setString(1, request.getParameter("PID"));
-
-                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
-
-                                pstmt.setDate(3, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -54,20 +45,16 @@
 
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
-                            rs = statement.executeQuery("SELECT * FROM attendance");
+                            rs = statement.executeQuery("SELECT * FROM bsms");
                     %>
                     <table>
                         <tr>
                             <th>PID</th>
-                            <th>Start</th>
-                            <th>End</th>
                         </tr>
                         <tr>
-                            <form action="attendances.jsp" method="get">
+                            <form action="bsms.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10"></th>
-                                <th><input type="date" name="start_date"></th>
-                                <th><input type="date" name="end_date"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -77,8 +64,6 @@
                         %>
                             <tr>
                                 <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("start_date") %></td>
-                                <td><%= rs.getString("end_date") %></td>
                             </tr>
                         <%
                             }
