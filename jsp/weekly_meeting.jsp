@@ -1,4 +1,6 @@
 <%@ page language="java" import="java.sql.*" %>
+<%@ page language="java" import="java.util.*" %>
+<%@ page language="java" import="java.text.*" %>
 
 <html>
     <body>
@@ -30,14 +32,24 @@
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO undergraduate VALUES (?, ?::college_enum, ?, ?)"));
+                                // INSERT the student attrs INTO the Attendance table.
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO weekly_meeting VALUES (?, ?::meeting_enum, ?, ?, ?)"));
+
+                                pstmt.setString(1, request.getParameter("section_id"));
                                 
-                                pstmt.setString(1, request.getParameter("PID"));
-                                pstmt.setString(2, request.getParameter("college"));
-                                pstmt.setString(3, request.getParameter("major"));
-                                pstmt.setString(4, request.getParameter("minor"));
-                                
+                                pstmt.setString(2, request.getParameter("meeting_type"));
+
+                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+                                java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
+                                java.util.Date endDateTime = dateTimeFormat.parse(request.getParameter("end_date") + " " + request.getParameter("end_time"));
+
+                                pstmt.setTimestamp(3, new java.sql.Timestamp(startDateTime.getTime()));
+                                pstmt.setTimestamp(4, new java.sql.Timestamp(endDateTime.getTime()));
+                                pstmt.setString(5, request.getParameter("location"));
+
                                 pstmt.executeUpdate();
                                 conn.commit();
                                 conn.setAutoCommit(true);
@@ -48,32 +60,34 @@
 
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
-                            rs = statement.executeQuery("SELECT * FROM undergraduate");
+                            rs = statement.executeQuery("SELECT * FROM weekly_meeting");
                     %>
                     <table>
                         <tr>
-                            <th>PID</th>
-                            <th>College</th>
-                            <th>Major</th>
-                            <th>Minor</th>
+                            <th>Section ID</th>
+                            <th>Meeting Type</th>
+                            <th>Start Date</th>
+                            <th>Start Time</th>
+                            <th>End Date</th>
+                            <th>End Time</th>
+                            <th>Location</th>
                         </tr>
                         <tr>
-                            <form action="undergrad.jsp" method="get">
+                            <form action="weekly_meeting.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="PID" size="10" required></th>
+                                <th><input value="" name="section_id" size="10" required></th>
                                 <th>
-                                    <select name="college" id="grad_type">
-                                        <option value="Warren">Warren</option>
-                                        <option value="Muir">Muir</option>
-                                        <option value="Sixth">Sixth</option>
-                                        <option value="ERC">ERC</option>
-                                        <option value="Marshall">Marshall</option>
-                                        <option value="Revelle">Revelle</option>
-                                        <option value="Seventh">Seventh</option>
+                                    <select name="meeting_type" id="meeting_type">
+                                        <option value="LE">Lecture</option>
+                                        <option value="DI">Discussion</option>
+                                        <option value="Lab Sessions">Lab Session</option>
                                     </select>
                                 </th>
-                                <th><input value="" name="major" size="10" required></th>
-                                <th><input value="" name="minor" size="10" required></th>
+                                <th><input type="date" name="start_date" required></th>
+                                <th><input type="time" name="start_time" required></th>
+                                <th><input type="date" name="end_date" required></th>
+                                <th><input type="time" name="end_time" required></th>
+                                <th><input value="" name="location" size="10" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -82,10 +96,13 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("college") %></td>
-                                <td><%= rs.getString("major") %></td>
-                                <td><%= rs.getString("minor") %></td>
+                                <td><%= rs.getString("section_id") %></td>
+                                <td><%= rs.getString("meeting_type") %></td>
+                                <td><%= rs.getString("start_time") %></td>
+                                <td></td>
+                                <td><%= rs.getString("end_time") %></td>
+                                <td></td>
+                                <td><%= rs.getString("location") %></td>
                             </tr>
                         <%
                             }

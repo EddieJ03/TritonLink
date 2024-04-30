@@ -58,9 +58,9 @@
                         <tr>
                             <form action="research.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="project_id" size="10"></th>
-                                <th><input value="" name="project_name" size="15"></th>
-                                <th><input value="" name="project_description" size="15"></th>
+                                <th><input value="" name="project_id" size="10" required></th>
+                                <th><input value="" name="project_name" size="15" required></th>
+                                <th><input value="" name="project_description" size="15" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>

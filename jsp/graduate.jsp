@@ -58,8 +58,8 @@
                         <tr>
                             <form action="graduate.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="PID" size="10"></th>
-                                <th><input value="" name="department" size="15"></th>
+                                <th><input value="" name="PID" size="10" required></th>
+                                <th><input value="" name="department" size="15" required></th>
                                 <th>
                                     <select name="grad_type" id="grad_type">
                                         <option value="MS">MS</option>

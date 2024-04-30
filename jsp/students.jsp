@@ -71,11 +71,11 @@
                         <tr>
                             <form action="students.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="PID" size="10"></th>
-                                <th><input value="" name="first_name" size="15"></th>
-                                <th><input value="" name="middle_name" size="15"></th>
-                                <th><input value="" name="last_name" size="15"></th>
-                                <th><input value="" name="ssn" size="10"></th>
+                                <th><input value="" name="PID" size="10" required></th>
+                                <th><input value="" name="first_name" size="15" required></th>
+                                <th><input value="" name="middle_name" size="15" required></th>
+                                <th><input value="" name="last_name" size="15" required></th>
+                                <th><input value="" name="ssn" size="10" required></th>
                                 <th><input type="checkbox" value="true" name="enrolled" size="10"></th>
                                 <th>
                                     <select name="residency" id="residency">

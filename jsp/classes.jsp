@@ -36,8 +36,8 @@
                                 pstmt.setString(1, request.getParameter("section_id"));
                                 pstmt.setString(2, request.getParameter("title"));
                                 pstmt.setString(3, request.getParameter("quarter"));
-                                pstmt.setInt(4, request.getParameter("year"));
-                                pstmt.setInt(5, request.getParameter("enrollment_limit"));
+                                pstmt.setInt(4, Integer.parseInt(request.getParameter("year")));
+                                pstmt.setInt(5, Integer.parseInt(request.getParameter("enrollment_limit")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -62,8 +62,8 @@
                         <tr>
                             <form action="classes.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="section_id" size="10"></th>
-                                <th><input value="" name="title" size="15"></th>
+                                <th><input value="" name="section_id" size="10" required></th>
+                                <th><input value="" name="title" size="15" required></th>
                                 <th>
                                     <select name="quarter" id="quarter">
                                         <option value="Fall">Fall</option>
@@ -72,8 +72,8 @@
                                         <option value="Summer">Summer</option>
                                     </select>
                                 </th>
-                                <th><input value="" name="year" size="10"></th>
-                                <th><input value="" name="enrollment_limit" size="15"></th>
+                                <th><input value="" type="number" name="year" size="10" required></th>
+                                <th><input value="" type="number" name="enrollment_limit" size="15" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>

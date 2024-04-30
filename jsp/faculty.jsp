@@ -58,9 +58,9 @@
                         <tr>
                             <form action="faculty.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="name" size="10"></th>
-                                <th><input value="" name="title" size="15"></th>
-                                <th><input value="" name="department" size="15"></th>
+                                <th><input value="" name="name" size="10" required></th>
+                                <th><input value="" name="title" size="15" required></th>
+                                <th><input value="" name="department" size="15" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>

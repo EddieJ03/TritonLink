@@ -65,9 +65,9 @@
                         <tr>
                             <form action="attendances.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="PID" size="10"></th>
-                                <th><input type="date" name="start_date"></th>
-                                <th><input type="date" name="end_date"></th>
+                                <th><input value="" name="PID" size="10" required></th>
+                                <th><input type="date" name="start_date" required></th>
+                                <th><input type="date" name="end_date" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
