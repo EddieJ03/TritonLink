@@ -1,4 +1,7 @@
 <%@ page language="java" import="java.sql.*" %>
+<%@ page language="java" import="java.util.*" %>
+<%@ page language="java" import="java.text.*" %>
+
 
 <html>
     <body>
@@ -14,9 +17,13 @@
                             return;
                         }
 
+                        Connection conn = null;
+                        ResultSet rs = null;
+                        Statement statement = null;
+
                         // Make a connection to the PostgreSQL datasource
                         try {
-                            Connection conn = DriverManager.getConnection(
+                            conn = DriverManager.getConnection(
                                     "jdbc:postgresql://localhost:5432/cse132b", // JDBC URL for PostgreSQL (/postgres is the database so may need to change on your end)
                                     "postgres", // Database username
                                     "edward" // CHANGE THIS TO YOUR PASSWORD
@@ -26,12 +33,16 @@
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
+                                // INSERT the student attrs INTO the Attendance table.
                                 PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO attendance VALUES (?, ?, ?)"));
-                                
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
                                 pstmt.setString(1, request.getParameter("PID"));
-                                pstmt.setString(2, request.getParameter("start_date"));
-                                pstmt.setString(3, request.getParameter("end_date"));
+
+                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+
+                                pstmt.setDate(3, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -39,11 +50,11 @@
                             }
 
                             // Create the statement
-                            Statement statement = conn.createStatement();
+                            statement = conn.createStatement();
 
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
-                            ResultSet rs = statement.executeQuery("SELECT * FROM attendance");
+                            rs = statement.executeQuery("SELECT * FROM attendance");
                     %>
                     <table>
                         <tr>
@@ -52,11 +63,11 @@
                             <th>End</th>
                         </tr>
                         <tr>
-                            <form action="jsp/attendances.jsp" method="get">
+                            <form action="attendances.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10"></th>
-                                <th><input type="date" value="" name="start_date"></th>
-                                <th><input type="date" value="" name="end_date"></th>
+                                <th><input type="date" name="start_date"></th>
+                                <th><input type="date" name="end_date"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -82,20 +93,29 @@
                             conn.close();
                         } catch (SQLException sqle) {
                             // Close the ResultSet
-                            rs.close();
+                            if(rs != null)
+                                rs.close();
                             // Close the Statement
-                            statement.close();
+
+                            if(statement != null)
+                                statement.close();
                             // Close the Connection
-                            conn.close();
+
+                            if(conn != null)
+                                conn.close();
 
                             out.println(sqle.getMessage());
                         } catch (Exception e) {
                             // Close the ResultSet
-                            rs.close();
+                            if(rs != null)
+                                rs.close();
                             // Close the Statement
-                            statement.close();
+                            if(statement != null)
+                                statement.close();
                             // Close the Connection
-                            conn.close();
+                            
+                            if(conn != null)
+                                conn.close();
                             
                             out.println(e.getMessage());
                         }
