@@ -1,4 +1,7 @@
 <%@ page language="java" import="java.sql.*" %>
+<%@ page language="java" import="java.util.*" %>
+<%@ page language="java" import="java.text.*" %>
+
 
 <html>
     <body>
@@ -30,21 +33,16 @@
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?::residency_enum)"));
-                                
-                                pstmt.setString(1, request.getParameter("PID"));
-                                pstmt.setString(2, request.getParameter("first_name"));
-                                pstmt.setString(3, request.getParameter("middle_name"));
-                                pstmt.setString(4, request.getParameter("last_name"));
-                                pstmt.setString(5, request.getParameter("ssn"));
-                            
-                                if(request.getParameter("enrolled") != null)
-                                    pstmt.setBoolean(6, true);
-                                else
-                                    pstmt.setBoolean(6, false);
+                                // INSERT the student attrs INTO the Attendance table.
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO attendance VALUES (?, ?, ?)"));
 
-                                pstmt.setString(7, request.getParameter("residency"));
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+
+                                pstmt.setDate(3, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -56,34 +54,20 @@
 
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
-                            rs = statement.executeQuery("SELECT * FROM student");
+                            rs = statement.executeQuery("SELECT * FROM attendance");
                     %>
                     <table>
                         <tr>
                             <th>PID</th>
-                            <th>First</th>
-                            <th>Middle</th>
-                            <th>Last</th>
-                            <th>SSN</th>
-                            <th>Enrolled</th>
-                            <th>Residency</th>
+                            <th>Start</th>
+                            <th>End</th>
                         </tr>
                         <tr>
-                            <form action="students.jsp" method="get">
+                            <form action="attendance.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" required></th>
-                                <th><input value="" name="first_name" size="15" required></th>
-                                <th><input value="" name="middle_name" size="15" required></th>
-                                <th><input value="" name="last_name" size="15" required></th>
-                                <th><input value="" name="ssn" size="10" required></th>
-                                <th><input type="checkbox" value="true" name="enrolled" size="10"></th>
-                                <th>
-                                    <select name="residency" id="residency">
-                                        <option value="California">California</option>
-                                        <option value="International">International</option>
-                                        <option value="Non-CA US">Non-CA US</option>
-                                    </select>
-                                </th>
+                                <th><input type="date" name="start_date" required></th>
+                                <th><input type="date" name="end_date" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -93,12 +77,8 @@
                         %>
                             <tr>
                                 <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("first_name") %></td>
-                                <td><%= rs.getString("middle_name") %></td>
-                                <td><%= rs.getString("last_name") %></td>
-                                <td><%= rs.getString("ssn") %></td>
-                                <td><%= rs.getString("enrolled") %></td>
-                                <td><%= rs.getString("residency") %></td>
+                                <td><%= rs.getString("start_date") %></td>
+                                <td><%= rs.getString("end_date") %></td>
                             </tr>
                         <%
                             }

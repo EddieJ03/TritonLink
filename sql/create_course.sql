@@ -1,5 +1,5 @@
 CREATE TABLE course (
-    course_number VARCHAR(50),
+    course_number VARCHAR(50) PRIMARY KEY,
     department VARCHAR(50),
     min_unit INT,
     max_unit INT,

@@ -2,7 +2,7 @@ CREATE TYPE grade_enum AS ENUM('A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'
 
 CREATE TABLE enrolled (
     PID VARCHAR(10),
-    course_number INT,
+    course_number VARCHAR(50),
     grade grade_enum,
     PRIMARY KEY (PID, course_number),
     FOREIGN KEY (PID) REFERENCES student(PID),
