@@ -51,6 +51,44 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE Student SET first_name = ?, middle_name = ?, last_name = ?, ssn = ?, enrolled = ?, residency = ?::residency_enum WHERE PID = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("first_name"));
+                                pstmt.setString(2, request.getParameter("middle_name"));
+                                pstmt.setString(3, request.getParameter("last_name"));
+                                pstmt.setString(4, request.getParameter("ssn"));
+                            
+                                if(request.getParameter("enrolled") != null)
+                                    pstmt.setBoolean(5, true);
+                                else
+                                    pstmt.setBoolean(5, false);
+
+                                pstmt.setString(6, request.getParameter("residency"));
+                                pstmt.setString(7, request.getParameter("PID"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM student WHERE PID = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -92,13 +130,24 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("first_name") %></td>
-                                <td><%= rs.getString("middle_name") %></td>
-                                <td><%= rs.getString("last_name") %></td>
-                                <td><%= rs.getString("ssn") %></td>
-                                <td><%= rs.getString("enrolled") %></td>
-                                <td><%= rs.getString("residency") %></td>
+                                <form action="student.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID"></td>
+                                    <td><input value="<%= rs.getString("first_name") %>" name="first_name"></td>
+                                    <td><input value="<%= rs.getString("middle_name") %>" name="middle_name"></td>
+                                    <td><input value="<%= rs.getString("last_name") %>" name="last_name"></td>
+                                    <td><input value="<%= rs.getString("ssn") %>" name="ssn"></td>
+
+                                    <td><input type="checkbox" <%=rs.getString("enrolled").equals("t") ? "checked" : "" %> name="enrolled" size="10"></td>
+                                    <td>
+                                        <select selected="<%= rs.getString("enrolled") %>" name="residency" id="residency">
+                                            <option value="California">California</option>
+                                            <option value="International">International</option>
+                                            <option value="Non-CA US">Non-CA US</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
                             </tr>
                         <%
                             }
