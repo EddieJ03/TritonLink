@@ -114,7 +114,7 @@
                                 <th><input value="" name="middle_name" size="15" required></th>
                                 <th><input value="" name="last_name" size="15" required></th>
                                 <th><input value="" name="ssn" size="10" required></th>
-                                <th><input type="checkbox" value="true" name="enrolled" size="10"></th>
+                                <th><input type="checkbox" value="true" name="enrolled"></th>
                                 <th>
                                     <select name="residency" id="residency">
                                         <option value="California">California</option>
@@ -132,18 +132,18 @@
                             <tr>
                                 <form action="student.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
-                                    <td><input value="<%= rs.getString("PID") %>" name="PID"></td>
-                                    <td><input value="<%= rs.getString("first_name") %>" name="first_name"></td>
-                                    <td><input value="<%= rs.getString("middle_name") %>" name="middle_name"></td>
-                                    <td><input value="<%= rs.getString("last_name") %>" name="last_name"></td>
-                                    <td><input value="<%= rs.getString("ssn") %>" name="ssn"></td>
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" required></td>
+                                    <td><input value="<%= rs.getString("first_name") %>" name="first_name" size="15" required></td>
+                                    <td><input value="<%= rs.getString("middle_name") %>" name="middle_name" size="15" required></td>
+                                    <td><input value="<%= rs.getString("last_name") %>" name="last_name" size="15" required></td>
+                                    <td><input value="<%= rs.getString("ssn") %>" name="ssn" size="10" required></td>
 
-                                    <td><input type="checkbox" <%=rs.getString("enrolled").equals("t") ? "checked" : "" %> name="enrolled" size="10"></td>
+                                    <td><input type="checkbox" <%=rs.getString("enrolled").equals("t") ? "checked" : "" %> name="enrolled"></td>
                                     <td>
-                                        <select selected="<%= rs.getString("enrolled") %>" name="residency" id="residency">
-                                            <option value="California">California</option>
-                                            <option value="International">International</option>
-                                            <option value="Non-CA US">Non-CA US</option>
+                                        <select name="residency" id="residency">
+                                            <option value="California" <%=rs.getString("residency").equals("California") ? "selected" : "" %>>California</option>
+                                            <option value="International" <%=rs.getString("residency").equals("International") ? "selected" : "" %>>International</option>
+                                            <option value="Non-CA US" <%=rs.getString("residency").equals("Non-CA US") ? "selected" : "" %>>Non-CA US</option>
                                         </select>
                                     </td>
                                     <td><input type="submit" value="Update"></td>
