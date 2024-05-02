@@ -41,6 +41,34 @@
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE graduate SET department = ?, grad_type = ?::grad_enum WHERE PID = ?"));
+                                
+                                pstmt.setString(3, request.getParameter("PID"));
+                                pstmt.setString(1, request.getParameter("department"));
+                                pstmt.setString(2, request.getParameter("grad_type"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM graduate WHERE PID = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
 
                             // Create the statement
                             statement = conn.createStatement();
@@ -74,9 +102,23 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("department") %></td>
-                                <td><%= rs.getString("grad_type") %></td>
+                                <form action="graduate.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" required></td>
+                                    <td><input value="<%= rs.getString("department") %>" name="department" size="15" required></td>
+                                    <td>
+                                        <select name="grad_type" id="grad_type">
+                                            <option value="MS" <%=rs.getString("grad_type").equals("MS") ? "selected" : "" %>>MS</option>
+                                            <option value="PhD" <%=rs.getString("grad_type").equals("PhD") ? "selected" : "" %>>PhD</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="graduate.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
