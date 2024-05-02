@@ -148,6 +148,11 @@
                                     </td>
                                     <td><input type="submit" value="Update"></td>
                                 </form>
+                                <form action="student.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
