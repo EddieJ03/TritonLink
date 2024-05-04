@@ -53,14 +53,13 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE probation SET start_date = ?, end_date = ?, reason = ? WHERE PID = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE probation SET end_date = ?, reason = ? WHERE PID = ? AND start_date = ?"));
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                pstmt.setString(4, request.getParameter("PID"));
+                                pstmt.setString(3, request.getParameter("PID"));
+                                pstmt.setDate(4, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
 
-                                pstmt.setDate(1, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
-
-                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
-                                pstmt.setString(3, request.getParameter("reason"));
+                                pstmt.setDate(1, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
+                                pstmt.setString(2, request.getParameter("reason"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -72,8 +71,11 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM probation WHERE PID = ?");
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM probation WHERE PID = ? AND start_date = ?");
                                 pstmt.setString(1, request.getParameter("PID"));
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
 
                                 int rowCount = pstmt.executeUpdate();
 
@@ -113,8 +115,9 @@
                                 <form action="probation.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("start_date") %>" name="start_date">
                                     <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
-                                    <td><input type="date" value="<%= rs.getString("start_date") %>" name="start_date" size="15" required></td>
+                                    <td><input type="date" value="<%= rs.getString("start_date") %>" name="start_date" size="15" disabled></td>
                                     <td><input type="date" value="<%= rs.getString("end_date") %>" name="end_date" size="15" required></td>
                                     <td><input value="<%= rs.getString("reason") %>" name="reason" size="15" required></td>
                                     <td><input type="submit" value="Update"></td>
@@ -122,6 +125,7 @@
                                 <form action="probation.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("start_date") %>" name="start_date">
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>

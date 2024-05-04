@@ -57,19 +57,19 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE weekly_meeting SET meeting_type = ?::meeting_enum, start_time = ?, end_time = ?, location = ? WHERE section_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE weekly_meeting SET end_time = ?, location = ? WHERE section_id = ? AND meeting_type = ?::meeting_enum AND start_time = ?"));
                                 
-                                pstmt.setString(5, request.getParameter("section_id"));
-                                pstmt.setString(1, request.getParameter("meeting_type"));
+                                pstmt.setString(3, request.getParameter("section_id"));
+                                pstmt.setString(4, request.getParameter("meeting_type"));
 
                                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                 java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
                                 java.util.Date endDateTime = dateTimeFormat.parse(request.getParameter("end_date") + " " + request.getParameter("end_time"));
 
-                                pstmt.setTimestamp(2, new java.sql.Timestamp(startDateTime.getTime()));
-                                pstmt.setTimestamp(3, new java.sql.Timestamp(endDateTime.getTime()));
-                                pstmt.setString(4, request.getParameter("location"));
+                                pstmt.setTimestamp(5, new java.sql.Timestamp(startDateTime.getTime()));
+                                pstmt.setTimestamp(1, new java.sql.Timestamp(endDateTime.getTime()));
+                                pstmt.setString(2, request.getParameter("location"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -81,8 +81,12 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM weekly_meeting WHERE section_id = ?");
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM weekly_meeting WHERE section_id = ? AND meeting_type = ?::meeting_enum AND start_time = ?");
                                 pstmt.setString(1, request.getParameter("section_id"));
+                                pstmt.setString(2, request.getParameter("meeting_type"));
+                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
+                                pstmt.setTimestamp(3, new java.sql.Timestamp(startDateTime.getTime()));
 
                                 int rowCount = pstmt.executeUpdate();
 
@@ -143,16 +147,19 @@
                                 <form action="weekly_meeting.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("meeting_type") %>" name="meeting_type">
+                                    <input type="hidden" value="<%= startDate %>" name="start_date">
+                                    <input type="hidden" value="<%= startTime %>" name="start_time">
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
                                     <td>
-                                        <select name="meeting_type" id="meeting_type">
+                                        <select name="meeting_type" id="meeting_type" disabled>
                                             <option value="LE" <%=rs.getString("meeting_type").equals("LE") ? "selected" : "" %>>Lecture</option>
                                             <option value="DI" <%=rs.getString("meeting_type").equals("DI") ? "selected" : "" %>>Discussion</option>
                                             <option value="Lab Sessions" <%=rs.getString("meeting_type").equals("Lab Sessions") ? "selected" : "" %>>Lab Session</option>
                                         </select>
                                     </td>
-                                    <th><input type="date" value="<%= startDate %>" name="start_date" required></th>
-                                    <th><input type="time" value="<%= startTime %>" name="start_time" required></th>
+                                    <th><input type="date" value="<%= startDate %>" name="start_date" disabled></th>
+                                    <th><input type="time" value="<%= startTime %>" name="start_time" disabled></th>
                                     <th><input type="date" value="<%= endDate %>" name="end_date" required></th>
                                     <th><input type="time" value="<%= endTime %>" name="end_time" required></th>
                                     <td><input value="<%= rs.getString("location") %>" name="location" size="15" required></td>
@@ -161,6 +168,9 @@
                                 <form action="weekly_meeting.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("meeting_type") %>" name="meeting_type">
+                                    <input type="hidden" value="<%= startDate %>" name="start_date">
+                                    <input type="hidden" value="<%= startTime %>" name="start_time">
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>
