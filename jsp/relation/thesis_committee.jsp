@@ -31,15 +31,26 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO degree VALUES (?, ?::degree_enum, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO thesis_committee VALUES (?, ?)"));
                                 
-                                pstmt.setString(1, request.getParameter("degree_id"));
-                                pstmt.setString(2, request.getParameter("degree_type"));
-                                pstmt.setString(3, request.getParameter("university"));
-                                pstmt.setInt(4, Integer.parseInt(request.getParameter("total_units")));
-                                
+                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(2, request.getParameter("faculty_name"));
                                 pstmt.executeUpdate();
                                 conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM thesis_committee WHERE PID = ? AND faculty_name = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(2, request.getParameter("faculty_name"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
                                 conn.setAutoCommit(true);
                             }
 
@@ -48,29 +59,18 @@
 
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
-                            rs = statement.executeQuery("SELECT * FROM degree");
+                            rs = statement.executeQuery("SELECT * FROM thesis_committee");
                     %>
                     <table>
                         <tr>
+                            <th>PID</th>
                             <th>Degree ID</th>
-                            <th>University</th>
-                            <th>Total Units</th>
-                            <th>Degree Type</th>
                         </tr>
                         <tr>
-                            <form action="degree.jsp" method="get">
+                            <form action="thesis_committee.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="degree_id" size="10" required></th>
-                                <th><input value="" name="university" size="15" required></th>
-                                <th><input type="number" value="" name="total_units" size="15" required></th>
-                                <th>
-                                    <select name="degree_type" id="degree_type">
-                                        <option value="Bachelor">Bachelor</option>
-                                        <option value="BS/MS">BS/MS</option>
-                                        <option value="MS">MS</option>
-                                        <option value="PhD">PhD</option>
-                                    </select>
-                                </th>
+                                <th><input value="" name="PID" size="10" maxlength="10" required></th>
+                                <th><input value="" name="faculty_name" size="15" maxlength="50" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -79,10 +79,14 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("degree_id") %></td>
-                                <td><%= rs.getString("university") %></td>
-                                <td><%= rs.getString("total_units") %></td>
-                                <td><%= rs.getString("degree_type") %></td>
+                                <form action="thesis_committee.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("faculty_name") %>" name="faculty_name">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("faculty_name") %>" name="faculty_name" size="15" disabled></td>
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
