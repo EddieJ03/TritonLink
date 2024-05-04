@@ -132,7 +132,8 @@
                             <tr>
                                 <form action="student.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
-                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" required></td>
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
                                     <td><input value="<%= rs.getString("first_name") %>" name="first_name" size="15" required></td>
                                     <td><input value="<%= rs.getString("middle_name") %>" name="middle_name" size="15" required></td>
                                     <td><input value="<%= rs.getString("last_name") %>" name="last_name" size="15" required></td>

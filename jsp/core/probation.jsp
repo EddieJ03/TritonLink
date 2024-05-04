@@ -49,6 +49,37 @@
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE probation SET start_date = ?, end_date = ?, reason = ? WHERE PID = ?"));
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                pstmt.setString(4, request.getParameter("PID"));
+
+                                pstmt.setDate(1, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+
+                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
+                                pstmt.setString(3, request.getParameter("reason"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM probation WHERE PID = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
 
                             // Create the statement
                             statement = conn.createStatement();
@@ -70,7 +101,7 @@
                                 <th><input value="" name="PID" size="10" required></th>
                                 <th><input type="date" name="start_date" required></th>
                                 <th><input type="date" name="end_date" required></th>
-                                <th><input value="" name="reason" size="10" required></th>
+                                <th><input value="" name="reason" size="15" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -79,10 +110,20 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("start_date") %></td>
-                                <td><%= rs.getString("end_date") %></td>
-                                <td><%= rs.getString("reason") %></td>
+                                <form action="probation.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input type="date" value="<%= rs.getString("start_date") %>" name="start_date" size="15" required></td>
+                                    <td><input type="date" value="<%= rs.getString("end_date") %>" name="end_date" size="15" required></td>
+                                    <td><input value="<%= rs.getString("reason") %>" name="reason" size="15" required></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="probation.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

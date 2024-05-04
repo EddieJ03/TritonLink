@@ -42,6 +42,35 @@
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE undergraduate SET college = ?::college_enum, major = ?, minor = ? WHERE PID = ?"));
+                                
+                                pstmt.setString(4, request.getParameter("PID"));
+                                pstmt.setString(1, request.getParameter("college"));
+                                pstmt.setString(2, request.getParameter("major"));
+                                pstmt.setString(3, request.getParameter("minor"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM undergraduate WHERE PID = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
 
                             // Create the statement
                             statement = conn.createStatement();
@@ -62,7 +91,7 @@
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" required></th>
                                 <th>
-                                    <select name="college" id="grad_type">
+                                    <select name="college" id="college">
                                         <option value="Warren">Warren</option>
                                         <option value="Muir">Muir</option>
                                         <option value="Sixth">Sixth</option>
@@ -82,10 +111,30 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("college") %></td>
-                                <td><%= rs.getString("major") %></td>
-                                <td><%= rs.getString("minor") %></td>
+                                <form action="undergrad.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td>
+                                        <select name="college" id="college">
+                                            <option value="Warren" <%=rs.getString("college").equals("Warren") ? "selected" : "" %>>Warren</option>
+                                            <option value="Muir" <%=rs.getString("college").equals("Muir") ? "selected" : "" %>>Muir</option>
+                                            <option value="Sixth" <%=rs.getString("college").equals("Sixth") ? "selected" : "" %>>Sixth</option>
+                                            <option value="ERC" <%=rs.getString("college").equals("ERC") ? "selected" : "" %>>ERC</option>
+                                            <option value="Marshall" <%=rs.getString("college").equals("Marshall") ? "selected" : "" %>>Marshall</option>
+                                            <option value="Revelle" <%=rs.getString("college").equals("Revelle") ? "selected" : "" %>>Revelle</option>
+                                            <option value="Seventh" <%=rs.getString("college").equals("Seventh") ? "selected" : "" %>>Seventh</option>
+                                        </select>
+                                    </td>
+                                    <td><input value="<%= rs.getString("major") %>" name="major" size="10" required></td>                                    
+                                    <td><input value="<%= rs.getString("minor") %>" name="minor" size="10" required></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="undergrad.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

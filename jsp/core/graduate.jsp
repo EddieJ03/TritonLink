@@ -104,7 +104,8 @@
                             <tr>
                                 <form action="graduate.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
-                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" required></td>
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
                                     <td><input value="<%= rs.getString("department") %>" name="department" size="15" required></td>
                                     <td>
                                         <select name="grad_type" id="grad_type">

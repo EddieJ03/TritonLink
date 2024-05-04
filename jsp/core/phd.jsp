@@ -43,6 +43,36 @@
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE PhD SET pre_candidacy = ? WHERE PID = ?"));
+                                
+                                pstmt.setString(2, request.getParameter("PID"));
+                                if(request.getParameter("pre_candidacy") != null)
+                                    pstmt.setBoolean(1, true);
+                                else
+                                    pstmt.setBoolean(1, false);
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM PhD WHERE PID = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
 
                             // Create the statement
                             statement = conn.createStatement();
@@ -60,7 +90,7 @@
                             <form action="phd.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" required></th>
-                                <th><input type="checkbox" value="true" name="pre_candidacy" size="10" required></th>
+                                <th><input type="checkbox" value="true" name="pre_candidacy" size="10"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -69,8 +99,18 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("pre_candidacy") %></td>
+                                <form action="phd.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input type="checkbox" <%=rs.getString("pre_candidacy").equals("t") ? "checked" : "" %> name="pre_candidacy"></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="phd.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
