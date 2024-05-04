@@ -41,6 +41,34 @@
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE research SET project_name = ?, project_description = ? WHERE project_id = ?"));
+                                
+                                pstmt.setString(3, request.getParameter("project_id"));
+                                pstmt.setString(1, request.getParameter("project_name"));
+                                pstmt.setString(2, request.getParameter("project_description"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM research WHERE project_id = ?");
+                                pstmt.setString(1, request.getParameter("project_id"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
 
                             // Create the statement
                             statement = conn.createStatement();
@@ -69,9 +97,19 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("project_id") %></td>
-                                <td><%= rs.getString("project_name") %></td>
-                                <td><%= rs.getString("project_description") %></td>
+                                <form action="research.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("project_id") %>" name="project_id">
+                                    <td><input value="<%= rs.getString("project_id") %>" name="project_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("project_name") %>" name="project_name" size="15" required></td>
+                                    <td><input value="<%= rs.getString("project_description") %>" name="project_description" size="15" required></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="research.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("project_id") %>" name="project_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
