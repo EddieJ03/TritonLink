@@ -27,14 +27,14 @@
                             );
 
                             String action = request.getParameter("action");
+
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
-                                // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
+
                                 PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO pursuing VALUES (?, ?, ?)"));
                                 
-                                pstmt.setString(1, request.getParameter("degree_id"));
-                                pstmt.setString(2, request.getParameter("PID"));
+                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(2, request.getParameter("degree_id"));
 
                                 if(request.getParameter("earned") != null)
                                     pstmt.setBoolean(3, true);
@@ -46,24 +46,55 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE pursuing SET earned = ? WHERE PID = ? AND degree_id = ?"));
+                                
+                                System.out.println(request.getParameter("PID"));
+
+                                if(request.getParameter("earned") != null)
+                                    pstmt.setBoolean(1, true);
+                                else
+                                    pstmt.setBoolean(1, false);
+
+                                pstmt.setString(2, request.getParameter("PID"));
+                                pstmt.setString(3, request.getParameter("degree_id"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM pursuing WHERE PID = ? AND degree_id = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(2, request.getParameter("degree_id"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
-                            // Use the statement to SELECT the student attributes
-                            // FROM the Student table.
                             rs = statement.executeQuery("SELECT * FROM pursuing");
                     %>
                     <table>
                         <tr>
-                            <th>Degree ID</th>
                             <th>PID</th>
+                            <th>Degree ID</th>
                             <th>Earned</th>
                         </tr>
                         <tr>
                             <form action="pursuing.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="degree_id" size="10" maxlength="10" required></th>
-                                <th><input value="" name="PID" size="15" maxlength="50" required></th>
+                                <th><input value="" name="PID" size="10" maxlength="10" required></th>
+                                <th><input value="" name="degree_id" size="15" maxlength="50" required></th>
                                 <th><input type="checkbox" value="true" name="earned"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
@@ -73,9 +104,21 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("degree_id") %></td>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><input type="checkbox" <%=rs.getString("earned").equals("t") ? "checked" : "" %> name="earned"></td>
+                                <form action="pursuing.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input value="<%= rs.getString("PID") %>" name="PID" size="10" type="hidden" >
+                                    <input value="<%= rs.getString("degree_id") %>" name="degree_id" size="10" type="hidden" >
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("degree_id") %>" name="degree_id" size="10" disabled></td>
+                                    <td><input type="checkbox" <%=rs.getString("earned").equals("t") ? "checked" : "" %> name="earned"></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="pursuing.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("degree_id") %>" name="degree_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
