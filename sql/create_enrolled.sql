@@ -2,9 +2,9 @@ CREATE TYPE grade_enum AS ENUM('A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'
 
 CREATE TABLE enrolled (
     PID VARCHAR(10),
-    course_number VARCHAR(50),
+    section_id VARCHAR(20),
     grade grade_enum,
-    PRIMARY KEY (PID, course_number),
-    FOREIGN KEY (PID) REFERENCES student(PID),
-    FOREIGN KEY (course_number) REFERENCES course(course_number)
+    PRIMARY KEY (PID, section_id),
+    FOREIGN KEY (PID) REFERENCES student(PID) ON DELETE CASCADE,
+    FOREIGN KEY (section_id) REFERENCES classes(section_id) ON DELETE CASCADE
 );
