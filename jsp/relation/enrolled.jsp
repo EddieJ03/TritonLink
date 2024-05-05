@@ -34,11 +34,41 @@
                                 PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO enrolled VALUES (?, ?, ?::grade_enum)"));
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
-                                pstmt.setString(2, request.getParameter("course_number"));
+                                pstmt.setString(2, request.getParameter("section_id"));
                                 pstmt.setString(3, request.getParameter("grade"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE enrolled SET grade = ?::grade_enum WHERE PID = ? AND section_id = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("grade"));
+                                pstmt.setString(2, request.getParameter("PID"));
+                                pstmt.setString(3, request.getParameter("section_id"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                // Create the prepared statement and use it to
+                                // DELETE the student FROM the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM enrolled WHERE PID = ? AND section_id = ?");
+                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(2, request.getParameter("section_id"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
                                 conn.setAutoCommit(true);
                             }
 
@@ -52,14 +82,14 @@
                     <table>
                         <tr>
                             <th>PID</th>
-                            <th>Course Number</th>
+                            <th>Section ID</th>
                             <th>Grade</th>
                         </tr>
                         <tr>
                             <form action="enrolled.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" maxlength="10" required></th>
-                                <th><input value="" name="course_number" size="15" maxlength="50" required></th>
+                                <th><input value="" name="section_id" size="15" maxlength="50" required></th>
                                 <th>
                                     <select name="grade" id="grade">
                                         <option value="A+">A+</option>
@@ -88,9 +118,40 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("course_number") %></td>
-                                <td><%= rs.getString("grade") %></td>
+                                <form action="enrolled.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="15" disabled></td>
+                                    <td>
+                                        <select name="grade" id="grade">
+                                            <option value="A+" <%=rs.getString("grade").equals("A+") ? "selected" : "" %>>A+</option>
+                                            <option value="A" <%=rs.getString("grade").equals("A") ? "selected" : "" %>>A</option>
+                                            <option value="A-" <%=rs.getString("grade").equals("A-") ? "selected" : "" %>>A-</option>
+                                            <option value="B+" <%=rs.getString("grade").equals("B+") ? "selected" : "" %>>B+</option>
+                                            <option value="B" <%=rs.getString("grade").equals("B") ? "selected" : "" %>>B</option>
+                                            <option value="B-" <%=rs.getString("grade").equals("B-") ? "selected" : "" %>>B-</option>
+                                            <option value="C+" <%=rs.getString("grade").equals("C+") ? "selected" : "" %>>C+</option>
+                                            <option value="C" <%=rs.getString("grade").equals("C") ? "selected" : "" %>>C</option>
+                                            <option value="C-" <%=rs.getString("grade").equals("C-") ? "selected" : "" %>>C-</option>
+                                            <option value="D+" <%=rs.getString("grade").equals("D+") ? "selected" : "" %>>D+</option>
+                                            <option value="D" <%=rs.getString("grade").equals("D") ? "selected" : "" %>>D</option>
+                                            <option value="D-" <%=rs.getString("grade").equals("D-") ? "selected" : "" %>>D-</option>
+                                            <option value="F" <%=rs.getString("grade").equals("F") ? "selected" : "" %>>F</option>
+                                            <option value="S" <%=rs.getString("grade").equals("S") ? "selected" : "" %>>S</option>
+                                            <option value="U" <%=rs.getString("grade").equals("U") ? "selected" : "" %>>U</option>
+                                            <option value="Incomplete" <%=rs.getString("grade").equals("Incomplete") ? "selected" : "" %>>Incomplete</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="enrolled.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
