@@ -31,9 +31,9 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO researches VALUES (?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO oversees_research VALUES (?, ?)"));
                                 
-                                pstmt.setString(1, request.getParameter("PID"));
+                                pstmt.setString(1, request.getParameter("faculty_name"));
                                 pstmt.setString(2, request.getParameter("project_id"));
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -44,8 +44,8 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM researches WHERE PID = ? AND project_id = ?");
-                                pstmt.setString(1, request.getParameter("PID"));
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM oversees_research WHERE faculty_name = ? AND project_id = ?");
+                                pstmt.setString(1, request.getParameter("faculty_name"));
                                 pstmt.setString(2, request.getParameter("project_id"));
 
                                 int rowCount = pstmt.executeUpdate();
@@ -59,17 +59,17 @@
 
                             // Use the statement to SELECT the student attributes
                             // FROM the Student table.
-                            rs = statement.executeQuery("SELECT * FROM researches");
+                            rs = statement.executeQuery("SELECT * FROM oversees_research");
                     %>
                     <table>
                         <tr>
                             <th>PID</th>
-                            <th>Project ID</th>
+                            <th>Faculty Name</th>
                         </tr>
                         <tr>
-                            <form action="researches.jsp" method="get">
+                            <form action="oversees_research.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="PID" size="10" maxlength="10" required></th>
+                                <th><input value="" name="faculty_name" size="10" maxlength="10" required></th>
                                 <th><input value="" name="project_id" size="15" maxlength="50" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
@@ -79,11 +79,11 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <form action="researches.jsp" method="get">
+                                <form action="oversees_research.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
-                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("faculty_name") %>" name="faculty_name">
                                     <input type="hidden" value="<%= rs.getString("project_id") %>" name="project_id">
-                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("faculty_name") %>" name="faculty_name" size="10" disabled></td>
                                     <td><input value="<%= rs.getString("project_id") %>" name="project_id" size="15" disabled></td>
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
