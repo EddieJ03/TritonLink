@@ -63,6 +63,55 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE course SET department = ?, min_unit = ?, max_unit = ?, letter_grade = ?, S_or_U = ?, lab_work = ?, instructor_consent = ? WHERE course_number = ?"));
+                                
+                                pstmt.setString(8, request.getParameter("course_number"));
+                                pstmt.setString(1, request.getParameter("department"));
+                                pstmt.setInt(2, Integer.parseInt(request.getParameter("min_unit")));
+                                pstmt.setInt(3, Integer.parseInt(request.getParameter("max_unit")));
+                            
+                                if(request.getParameter("letter_grade") != null)
+                                    pstmt.setBoolean(4, true);
+                                else
+                                    pstmt.setBoolean(4, false);
+
+                                if(request.getParameter("S_or_U") != null)
+                                    pstmt.setBoolean(5, true);
+                                else
+                                    pstmt.setBoolean(5, false);
+
+                                if(request.getParameter("lab_work") != null)
+                                    pstmt.setBoolean(6, true);
+                                else
+                                    pstmt.setBoolean(6, false);
+
+                                if(request.getParameter("instructor_consent") != null)
+                                    pstmt.setBoolean(7, true);
+                                else
+                                    pstmt.setBoolean(7, false);
+
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM course WHERE course_number = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("course_number"));
+
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -100,14 +149,25 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("course_number") %></td>
-                                <td><%= rs.getString("department") %></td>
-                                <td><%= rs.getString("min_unit") %></td>
-                                <td><%= rs.getString("max_unit") %></td>
-                                <td><%= rs.getString("letter_grade") %></td>
-                                <td><%= rs.getString("S_or_U") %></td>
-                                <td><%= rs.getString("lab_work") %></td>
-                                <td><%= rs.getString("instructor_consent") %></td>
+                                <form action="student.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("department") %>" name="department" size="15" required></td>
+                                    <td><input type="number" value="<%= rs.getString("min_unit") %>" name="min_unit" size="15" required></td>
+                                    <td><input type="number" value="<%= rs.getString("max_unit") %>" name="max_unit" size="15" required></td>
+
+                                    <td><input type="checkbox" <%=rs.getString("letter_grade").equals("t") ? "checked" : "" %> name="letter_grade"></td>
+                                    <td><input type="checkbox" <%=rs.getString("S_or_U").equals("t") ? "checked" : "" %> name="S_or_U"></td>
+                                    <td><input type="checkbox" <%=rs.getString("lab_work").equals("t") ? "checked" : "" %> name="lab_work"></td>
+                                    <td><input type="checkbox" <%=rs.getString("instructor_consent").equals("t") ? "checked" : "" %> name="instructor_consent"></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="student.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
