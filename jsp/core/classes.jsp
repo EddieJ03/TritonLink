@@ -44,6 +44,36 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE classes SET title = ?, quarter = ?, year = ?, enrollment_limit = ? WHERE section_id = ?"));
+                                
+                                pstmt.setString(5, request.getParameter("section_id"));
+                                pstmt.setString(1, request.getParameter("title"));
+                                pstmt.setString(2, request.getParameter("quarter"));
+                                pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
+                                pstmt.setInt(4, Integer.parseInt(request.getParameter("enrollment_limit")));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM classes WHERE section_id = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("section_id"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -82,11 +112,29 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("section_id") %></td>
-                                <td><%= rs.getString("title") %></td>
-                                <td><%= rs.getString("quarter") %></td>
-                                <td><%= rs.getString("year") %></td>
-                                <td><%= rs.getString("enrollment_limit") %></td>
+                                <form action="student.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("title") %>" name="title" size="15" required></td>
+
+                                    <td>
+                                        <select name="quarter" id="quarter">
+                                            <option value="Fall" <%=rs.getString("quarter").equals("Fall") ? "selected" : "" %>>Fall</option>
+                                            <option value="Winter" <%=rs.getString("quarter").equals("Winter") ? "selected" : "" %>>Winter</option>
+                                            <option value="Spring" <%=rs.getString("quarter").equals("Spring") ? "selected" : "" %>>Spring</option>
+                                            <option value="Summer" <%=rs.getString("quarter").equals("Summer") ? "selected" : "" %>>Summer</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="number" value="<%= rs.getString("year") %>" name="year" size="15" required></td>
+                                    <td><input type="number" value="<%= rs.getString("enrollment_limit") %>" name="enrollment_limit" size="15" required></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="bsms.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form> 
                             </tr>
                         <%
                             }
