@@ -43,6 +43,22 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE degree SET WHERE degree_type = ?, university = ?, total_units = ? WHERE degree_id = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("degree_type"));
+                                pstmt.setString(2, request.getParameter("university"));
+                                pstmt.setInt(3, Integer.parseInt(request.getParameter("total_units")));
+                                pstmt.setString(4, request.getParameter("degree_id"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             if (action != null && action.equals("delete")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
@@ -92,10 +108,6 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("degree_id") %></td>
-                                <td><%= rs.getString("university") %></td>
-                                <td><%= rs.getString("total_units") %></td>
-                                <td><%= rs.getString("degree_type") %></td>
                                 <form action="degree.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("degree_id") %>" name="degree_id">
