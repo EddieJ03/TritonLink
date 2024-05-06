@@ -49,6 +49,42 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE attendance SET end_date = ? WHERE PID = ? AND start_date = ?"));
+                                
+                                pstmt.setString(2, request.getParameter("PID"));
+
+                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                pstmt.setDate(3, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+
+                                pstmt.setDate(1, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM attendance WHERE PID = ? AND start_date = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("PID"));
+
+                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -76,9 +112,21 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
-                                <td><%= rs.getString("start_date") %></td>
-                                <td><%= rs.getString("end_date") %></td>
+                                <form action="attendance.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("start_date") %>" name="start_date">
+                                    <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
+                                    <td><input type="date" value="<%= rs.getString("start_date") %>" name="start_date" size="15" disabled></td>
+                                    <td><input type="date" value="<%= rs.getString("end_date") %>" name="end_date" size="15" required></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="attendance.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("start_date") %>" name="start_date">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

@@ -40,6 +40,19 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROME bsms WHERE PID = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("PID"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -63,7 +76,11 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("PID") %></td>
+                                <form action="bsms.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>                            
                             </tr>
                         <%
                             }

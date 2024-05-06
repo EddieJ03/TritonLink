@@ -50,6 +50,7 @@
                                 conn.commit();
                                 conn.setAutoCommit(true);
                             }
+                            
                             if (action != null && action.equals("update")) {
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to

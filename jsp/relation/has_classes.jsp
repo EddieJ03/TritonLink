@@ -27,11 +27,11 @@
                             );
 
                             String action = request.getParameter("action");
+
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
-                                // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO has_classes VALUES (?, ?)"));
+
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO has_classes VALUES (?, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("course_number"));
                                 pstmt.setString(2, request.getParameter("section_id"));
@@ -41,16 +41,27 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM has_classes WHERE course_number = ? AND section_id = ?");
+                                pstmt.setString(1, request.getParameter("course_number"));
+                                pstmt.setString(2, request.getParameter("section_id"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
-                            // Use the statement to SELECT the student attributes
-                            // FROM the Student table.
                             rs = statement.executeQuery("SELECT * FROM has_classes");
                     %>
                     <table>
                         <tr>
-                            <th>Course</th>
+                            <th>Course Number</th>
                             <th>Section ID</th>
                         </tr>
                         <tr>
@@ -58,7 +69,7 @@
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="course_number" size="10" maxlength="10" required></th>
                                 <th><input value="" name="section_id" size="15" maxlength="50" required></th>
-                                <th>
+                                <th><input type="checkbox" value="true" name="earned"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -67,8 +78,14 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("course_number") %></td>
-                                <td><%= rs.getString("section_id") %></td>
+                                <form action="has_classes.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
+                                    <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

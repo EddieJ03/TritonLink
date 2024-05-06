@@ -27,11 +27,11 @@
                             );
 
                             String action = request.getParameter("action");
+
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
-                                // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO category_course VALUES (?, ?)"));
+
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO category_course VALUES (?, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("course_number"));
                                 pstmt.setString(2, request.getParameter("category_id"));
@@ -41,16 +41,27 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM category_course WHERE course_number = ? AND category_id = ?");
+                                pstmt.setString(1, request.getParameter("course_number"));
+                                pstmt.setString(2, request.getParameter("category_id"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
-                            // Use the statement to SELECT the student attributes
-                            // FROM the Student table.
                             rs = statement.executeQuery("SELECT * FROM category_course");
                     %>
                     <table>
                         <tr>
-                            <th>Course</th>
+                            <th>Course Number</th>
                             <th>Category ID</th>
                         </tr>
                         <tr>
@@ -58,7 +69,7 @@
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="course_number" size="10" maxlength="10" required></th>
                                 <th><input value="" name="category_id" size="15" maxlength="50" required></th>
-                                <th>
+                                <th><input type="checkbox" value="true" name="earned"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -67,8 +78,14 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("course_number") %></td>
-                                <td><%= rs.getString("category_id") %></td>
+                                <form action="category_course.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("category_id") %>" name="category_id" size="10" disabled></td>
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
+                                    <input type="hidden" value="<%= rs.getString("category_id") %>" name="category_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

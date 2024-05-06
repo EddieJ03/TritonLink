@@ -27,11 +27,11 @@
                             );
 
                             String action = request.getParameter("action");
+
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
-                                // Create the prepared statement and use it to
-                                // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO prerequisite VALUES (?, ?)"));
+
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO prerequisite VALUES (?, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("course_number"));
                                 pstmt.setString(2, request.getParameter("prereq_course"));
@@ -41,24 +41,35 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM prerequisite WHERE course_number = ? AND prereq_course = ?");
+                                pstmt.setString(1, request.getParameter("course_number"));
+                                pstmt.setString(2, request.getParameter("prereq_course"));
+
+                                int rowCount = pstmt.executeUpdate();
+
+                                conn.setAutoCommit(false);
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
-                            // Use the statement to SELECT the student attributes
-                            // FROM the Student table.
                             rs = statement.executeQuery("SELECT * FROM prerequisite");
                     %>
                     <table>
                         <tr>
-                            <th>Course</th>
-                            <th>Prerequisite</th>
+                            <th>Course Number</th>
+                            <th>Prereq Number</th>
                         </tr>
                         <tr>
                             <form action="prerequisite.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="course_number" size="10" maxlength="10" required></th>
                                 <th><input value="" name="prereq_course" size="15" maxlength="50" required></th>
-                                <th>
+                                <th><input type="checkbox" value="true" name="earned"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -67,8 +78,14 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("course_number") %></td>
-                                <td><%= rs.getString("prereq_course") %></td>
+                                <form action="prerequisite.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("prereq_course") %>" name="prereq_course" size="10" disabled></td>
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
+                                    <input type="hidden" value="<%= rs.getString("prereq_course") %>" name="prereq_course">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

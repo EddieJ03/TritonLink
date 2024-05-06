@@ -42,6 +42,34 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Faculty table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE faculty SET title = ?, department = ? WHERE name = ?"));
+                                
+                                pstmt.setString(2, request.getParameter("name"));
+                                pstmt.setString(3, request.getParameter("title"));
+                                pstmt.setString(1, request.getParameter("department"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Faculty table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM faculty WHERE name = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("name"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -72,6 +100,19 @@
                                 <td><%= rs.getString("name") %></td>
                                 <td><%= rs.getString("title") %></td>
                                 <td><%= rs.getString("department") %></td>
+                                <form action="faculty.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("name") %>" name="name">
+                                    <td><input value="<%= rs.getString("name") %>" name="name" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("title") %>" name="title" size="15" required></td>
+                                    <td><input value="<%= rs.getString("department") %>" name="department" size="15" required></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="faculty.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <td><input value="<%= rs.getString("name") %>" name="name" size="10" disabled></td>
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }

@@ -43,6 +43,19 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM degree WHERE degree_id = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("degree_id"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -83,6 +96,27 @@
                                 <td><%= rs.getString("university") %></td>
                                 <td><%= rs.getString("total_units") %></td>
                                 <td><%= rs.getString("degree_type") %></td>
+                                <form action="degree.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("degree_id") %>" name="degree_id">
+                                    <td><input value="<%= rs.getString("degree_id") %>" name="degree_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("university") %>" name="university" size="15" required></td>
+                                    <td><input value="<%= rs.getString("total_units") %>" type="number" value="" name="total_units" size="15" required></td>
+                                    <td>
+                                        <select name="degree_type" id="degree_type">
+                                            <option value="Bachelor" <%=rs.getString("degree_type").equals("Bachelor") ? "selected" : "" %>>Bachelor</option>
+                                            <option value="BS/MS" <%=rs.getString("degree_type").equals("BS/MS") ? "selected" : "" %>>BS/MS</option>
+                                            <option value="MS" <%=rs.getString("degree_type").equals("MS") ? "selected" : "" %>>MS</option>
+                                            <option value="PhD" <%=rs.getString("degree_type").equals("PhD") ? "selected" : "" %>>PhD</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="degree.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <td><input value="<%= rs.getString("degree_id") %>" name="degree_id" size="10" disabled></td>
+                                    <td><input type="submit" value="Delete"></td>
+                                </form>
                             </tr>
                         <%
                             }
