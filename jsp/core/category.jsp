@@ -48,6 +48,40 @@
                                 conn.setAutoCommit(true);
                             }
 
+                            if (action != null && action.equals("update")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE category SET category_name = ?, min_gpa = ?, required_units = ?, is_concentration = ? WHERE category_id = ?"));
+                                
+                                pstmt.setString(5, request.getParameter("category_id"));
+                                pstmt.setString(1, request.getParameter("category_name"));
+                                pstmt.setFloat(2, Float.parseFloat(request.getParameter("min_gpa")));
+                                pstmt.setInt(3 Integer.parseInt(request.getParameter("required_units")));
+                            
+                                if(request.getParameter("is_concentration") != null)
+                                    pstmt.setBoolean(4, true);
+                                else
+                                    pstmt.setBoolean(4, false);
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
+                            if (action != null && action.equals("delete")) {
+                                conn.setAutoCommit(false);
+                                // Create the prepared statement and use it to
+                                // INSERT the student attrs INTO the Student table.
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM category WHERE category_id = ?"));
+                                
+                                pstmt.setString(1, request.getParameter("category_id"));
+                                
+                                pstmt.executeUpdate();
+                                conn.commit();
+                                conn.setAutoCommit(true);
+                            }
+
                             // Create the statement
                             statement = conn.createStatement();
 
@@ -79,11 +113,21 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("category_id") %></td>
-                                <td><%= rs.getString("category_name") %></td>
-                                <td><%= rs.getString("min_gpa") %></td>
-                                <td><%= rs.getString("required_units") %></td>
-                                <td><%= rs.getString("is_concentration") %></td>
+                                <form action="category.jsp" method="get">
+                                    <input type="hidden" value="update" name="action">
+                                    <input type="hidden" value="<%= rs.getString("category_id") %>" name="PID">
+                                    <td><input value="<%= rs.getString("category_id") %>" name="category_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("category_name") %>" name="category_name" size="15" required></td>
+                                    <td><input value="<%= rs.getString("min_gpa") %>" name="min_gpa" size="15" required></td>
+                                    <td><input value="<%= rs.getString("required_units") %>" name="required_units" size="15" required></td>
+                                    <td><input type="checkbox" <%=rs.getString("is_concentration").equals("t") ? "checked" : "" %> name="is_concentration"></td>
+                                    <td><input type="submit" value="Update"></td>
+                                </form>
+                                <form action="category.jsp" method="get">
+                                    <input type="hidden" value="delete" name="action">
+                                    <input type="hidden" value="<%= rs.getString("category_id") %>" name="category_id">
+                                    <td><input type="submit" value="Delete"></td>
+                                </form> 
                             </tr>
                         <%
                             }
