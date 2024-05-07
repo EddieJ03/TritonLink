@@ -31,17 +31,18 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO category VALUES (?, ?, ?, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO category VALUES (?, ?, ?, ?, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("category_id"));
-                                pstmt.setString(2, request.getParameter("category_name"));
-                                pstmt.setFloat(3, Float.parseFloat(request.getParameter("min_gpa")));
-                                pstmt.setInt(4, Integer.parseInt(request.getParameter("required_units")));
+                                pstmt.setString(2, request.getParameter("degree_id"));
+                                pstmt.setString(3, request.getParameter("category_name"));
+                                pstmt.setFloat(4, Float.parseFloat(request.getParameter("min_gpa")));
+                                pstmt.setInt(5, Integer.parseInt(request.getParameter("required_units")));
                             
                                 if(request.getParameter("is_concentration") != null)
-                                    pstmt.setBoolean(5, true);
+                                    pstmt.setBoolean(6, true);
                                 else
-                                    pstmt.setBoolean(5, false);
+                                    pstmt.setBoolean(6, false);
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -52,12 +53,13 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE category SET category_name = ?, min_gpa = ?, required_units = ?, is_concentration = ? WHERE category_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE category SET category_name = ?, min_gpa = ?, required_units = ?, is_concentration = ?, degree_id = ? WHERE category_id = ?"));
                                 
-                                pstmt.setString(5, request.getParameter("category_id"));
+                                pstmt.setString(6, request.getParameter("category_id"));
+                                pstmt.setString(5, request.getParameter("degree_id"));
                                 pstmt.setString(1, request.getParameter("category_name"));
                                 pstmt.setFloat(2, Float.parseFloat(request.getParameter("min_gpa")));
-                                pstmt.setInt(3 Integer.parseInt(request.getParameter("required_units")));
+                                pstmt.setInt(3, Integer.parseInt(request.getParameter("required_units")));
                             
                                 if(request.getParameter("is_concentration") != null)
                                     pstmt.setBoolean(4, true);
@@ -92,6 +94,7 @@
                     <table>
                         <tr>
                             <th>Category ID</th>
+                            <th>Degree ID</th>
                             <th>Category Name</th>
                             <th>Min GPA</th>
                             <th>Required Units</th>
@@ -101,6 +104,7 @@
                             <form action="category.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="category_id" size="10"></th>
+                                <th><input value="" name="degree_id" size="10"></th>
                                 <th><input value="" name="category_name" size="15"></th>
                                 <th><input type="number" step="0.01" value="" name="min_gpa" size="15"></th>
                                 <th><input required type="number" value="" name="required_units" size="15"></th>
@@ -115,8 +119,9 @@
                             <tr>
                                 <form action="category.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
-                                    <input type="hidden" value="<%= rs.getString("category_id") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("category_id") %>" name="category_id">
                                     <td><input value="<%= rs.getString("category_id") %>" name="category_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("degree_id") %>" name="degree_id" size="15" required></td>
                                     <td><input value="<%= rs.getString("category_name") %>" name="category_name" size="15" required></td>
                                     <td><input value="<%= rs.getString("min_gpa") %>" name="min_gpa" size="15" required></td>
                                     <td><input value="<%= rs.getString("required_units") %>" name="required_units" size="15" required></td>

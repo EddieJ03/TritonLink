@@ -31,7 +31,7 @@
                             if (action != null && action.equals("insert")) {
                                 conn.setAutoCommit(false);
 
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO category_course VALUES (?, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO category_course VALUES (?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("course_number"));
                                 pstmt.setString(2, request.getParameter("category_id"));
@@ -69,7 +69,6 @@
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="course_number" size="10" maxlength="10" required></th>
                                 <th><input value="" name="category_id" size="15" maxlength="50" required></th>
-                                <th><input type="checkbox" value="true" name="earned"></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>

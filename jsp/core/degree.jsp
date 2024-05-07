@@ -47,7 +47,7 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE degree SET WHERE degree_type = ?, university = ?, total_units = ? WHERE degree_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE degree SET degree_type = ?::degree_enum, university = ?, total_units = ? WHERE degree_id = ?"));
                                 
                                 pstmt.setString(1, request.getParameter("degree_type"));
                                 pstmt.setString(2, request.getParameter("university"));
@@ -126,7 +126,7 @@
                                 </form>
                                 <form action="degree.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
-                                    <td><input value="<%= rs.getString("degree_id") %>" name="degree_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("degree_id") %>" name="degree_id" size="10" type="hidden"></td>
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>

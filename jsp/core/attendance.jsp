@@ -57,7 +57,7 @@
                                 
                                 pstmt.setString(2, request.getParameter("PID"));
 
-                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                                 pstmt.setDate(3, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
 
@@ -76,7 +76,7 @@
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
 
-                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                                 pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
                                 

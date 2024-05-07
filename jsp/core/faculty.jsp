@@ -48,9 +48,9 @@
                                 // INSERT the student attrs INTO the Faculty table.
                                 PreparedStatement pstmt = conn.prepareStatement(("UPDATE faculty SET title = ?, department = ? WHERE name = ?"));
                                 
-                                pstmt.setString(2, request.getParameter("name"));
-                                pstmt.setString(3, request.getParameter("title"));
-                                pstmt.setString(1, request.getParameter("department"));
+                                pstmt.setString(3, request.getParameter("name"));
+                                pstmt.setString(1, request.getParameter("title"));
+                                pstmt.setString(2, request.getParameter("department"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -97,9 +97,6 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <td><%= rs.getString("name") %></td>
-                                <td><%= rs.getString("title") %></td>
-                                <td><%= rs.getString("department") %></td>
                                 <form action="faculty.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("name") %>" name="name">
@@ -110,7 +107,7 @@
                                 </form>
                                 <form action="faculty.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
-                                    <td><input value="<%= rs.getString("name") %>" name="name" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("name") %>" name="name" size="10" type="hidden"></td>
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>

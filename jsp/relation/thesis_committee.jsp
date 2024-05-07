@@ -64,7 +64,7 @@
                     <table>
                         <tr>
                             <th>PID</th>
-                            <th>Degree ID</th>
+                            <th>Faculty Name</th>
                         </tr>
                         <tr>
                             <form action="thesis_committee.jsp" method="get">

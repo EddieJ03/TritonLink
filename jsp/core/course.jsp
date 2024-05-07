@@ -149,7 +149,7 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <form action="student.jsp" method="get">
+                                <form action="course.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="10" disabled></td>
@@ -163,9 +163,9 @@
                                     <td><input type="checkbox" <%=rs.getString("instructor_consent").equals("t") ? "checked" : "" %> name="instructor_consent"></td>
                                     <td><input type="submit" value="Update"></td>
                                 </form>
-                                <form action="student.jsp" method="get">
+                                <form action="course.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
-                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>

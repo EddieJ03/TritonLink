@@ -31,13 +31,14 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO classes VALUES (?, ?, ?::quarter_enum, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO classes VALUES (?, ?, ?, ?::quarter_enum, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("section_id"));
-                                pstmt.setString(2, request.getParameter("title"));
-                                pstmt.setString(3, request.getParameter("quarter"));
-                                pstmt.setInt(4, Integer.parseInt(request.getParameter("year")));
-                                pstmt.setInt(5, Integer.parseInt(request.getParameter("enrollment_limit")));
+                                pstmt.setString(2, request.getParameter("course_number"));
+                                pstmt.setString(3, request.getParameter("title"));
+                                pstmt.setString(4, request.getParameter("quarter"));
+                                pstmt.setInt(5, Integer.parseInt(request.getParameter("year")));
+                                pstmt.setInt(6, Integer.parseInt(request.getParameter("enrollment_limit")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -48,13 +49,14 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE classes SET title = ?, quarter = ?, year = ?, enrollment_limit = ? WHERE section_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE classes SET title = ?, course_number = ?, quarter = ?::quarter_enum, year = ?, enrollment_limit = ? WHERE section_id = ?"));
                                 
-                                pstmt.setString(5, request.getParameter("section_id"));
+                                pstmt.setString(6, request.getParameter("section_id"));
                                 pstmt.setString(1, request.getParameter("title"));
-                                pstmt.setString(2, request.getParameter("quarter"));
-                                pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
-                                pstmt.setInt(4, Integer.parseInt(request.getParameter("enrollment_limit")));
+                                pstmt.setString(2, request.getParameter("course_number"));
+                                pstmt.setString(3, request.getParameter("quarter"));
+                                pstmt.setInt(4, Integer.parseInt(request.getParameter("year")));
+                                pstmt.setInt(5, Integer.parseInt(request.getParameter("enrollment_limit")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -84,6 +86,7 @@
                     <table>
                         <tr>
                             <th>Section ID</th>
+                            <th>Course Number</th>
                             <th>Title</th>
                             <th>Quarter</th>
                             <th>Year</th>
@@ -93,6 +96,7 @@
                             <form action="classes.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="section_id" size="10" required></th>
+                                <th><input value="" name="course_number" size="10" required></th>
                                 <th><input value="" name="title" size="15" required></th>
                                 <th>
                                     <select name="quarter" id="quarter">
@@ -112,10 +116,11 @@
                             while ( rs.next() ) {
                         %>
                             <tr>
-                                <form action="student.jsp" method="get">
+                                <form action="classes.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="15" required></td>
                                     <td><input value="<%= rs.getString("title") %>" name="title" size="15" required></td>
 
                                     <td>
@@ -130,7 +135,7 @@
                                     <td><input type="number" value="<%= rs.getString("enrollment_limit") %>" name="enrollment_limit" size="15" required></td>
                                     <td><input type="submit" value="Update"></td>
                                 </form>
-                                <form action="bsms.jsp" method="get">
+                                <form action="classes.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
                                     <td><input type="submit" value="Delete"></td>

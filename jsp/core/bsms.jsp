@@ -44,7 +44,7 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROME bsms WHERE PID = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM bsms WHERE PID = ?"));
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
                                 
@@ -79,6 +79,7 @@
                                 <form action="bsms.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <td><input disabled value="<%= rs.getString("PID") %>" name="PID" size="10" ></td>
                                     <td><input type="submit" value="Delete"></td>
                                 </form>                            
                             </tr>
