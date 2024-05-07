@@ -2,8 +2,10 @@ CREATE TYPE quarter_enum AS ENUM('Fall', 'Winter', 'Spring', 'Summer');
 
 CREATE TABLE classes (
     section_id VARCHAR(20) PRIMARY KEY,
+    course_number VARCHAR(50),
     title VARCHAR(100),
     quarter quarter_enum,
     year INT,
-    enrollment_limit INT
+    enrollment_limit INT,
+    FOREIGN KEY (course_number) REFERENCES course(course_number) ON DELETE CASCADE
 );
