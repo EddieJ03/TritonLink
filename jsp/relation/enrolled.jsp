@@ -31,11 +31,12 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO enrolled VALUES (?, ?, ?::grade_enum)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO enrolled VALUES (?, ?, ?::grade_enum, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
                                 pstmt.setString(2, request.getParameter("section_id"));
                                 pstmt.setString(3, request.getParameter("grade"));
+                                pstmt.setInt(4, Integer.parseInt(request.getParameter("num_units")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -46,11 +47,12 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE enrolled SET grade = ?::grade_enum WHERE PID = ? AND section_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE enrolled SET grade = ?::grade_enum, num_units = ? WHERE PID = ? AND section_id = ?"));
                                 
                                 pstmt.setString(1, request.getParameter("grade"));
-                                pstmt.setString(2, request.getParameter("PID"));
-                                pstmt.setString(3, request.getParameter("section_id"));
+                                pstmt.setString(3, request.getParameter("PID"));
+                                pstmt.setString(4, request.getParameter("section_id"));
+                                pstmt.setInt(2, Integer.parseInt(request.getParameter("num_units")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -84,6 +86,7 @@
                             <th>PID</th>
                             <th>Section ID</th>
                             <th>Grade</th>
+                            <th>Num Units</th>
                         </tr>
                         <tr>
                             <form action="enrolled.jsp" method="get">
@@ -110,6 +113,7 @@
                                         <option value="Incomplete">Incomplete</option>
                                     </select>
                                 </th>
+                                <th><input value="" name="num_units" size="15" type="number" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -144,6 +148,7 @@
                                             <option value="Incomplete" <%=rs.getString("grade").equals("Incomplete") ? "selected" : "" %>>Incomplete</option>
                                         </select>
                                     </td>
+                                    <td><input value="<%= rs.getString("num_units") %>" name="num_units" size="15"></td>
                                     <td><input type="submit" value="Update"></td>
                                 </form>
                                 <form action="enrolled.jsp" method="get">

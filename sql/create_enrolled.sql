@@ -4,6 +4,7 @@ CREATE TABLE enrolled (
     PID VARCHAR(10),
     section_id VARCHAR(20),
     grade grade_enum,
+    num_units INT,
     PRIMARY KEY (PID, section_id),
     FOREIGN KEY (PID) REFERENCES student(PID) ON DELETE CASCADE,
     FOREIGN KEY (section_id) REFERENCES classes(section_id) ON DELETE CASCADE
