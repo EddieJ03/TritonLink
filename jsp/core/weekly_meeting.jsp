@@ -33,20 +33,20 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Attendance table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO weekly_meeting VALUES (?, ?::meeting_enum, ?, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO weekly_meeting VALUES (?, ?::meeting_enum, ?::time, ?, ?::time, ?, ?::day_enum, ?)"));
 
                                 pstmt.setString(1, request.getParameter("section_id"));
                                 
                                 pstmt.setString(2, request.getParameter("meeting_type"));
 
-                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                pstmt.setString(3, request.getParameter("start_time"));
+                                pstmt.setDate(4, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+                                pstmt.setString(5, request.getParameter("end_time"));
+                                pstmt.setDate(6, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
+                                pstmt.setString(7, request.getParameter("day_of_week"));
 
-                                java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
-                                java.util.Date endDateTime = dateTimeFormat.parse(request.getParameter("end_date") + " " + request.getParameter("end_time"));
-
-                                pstmt.setTimestamp(3, new java.sql.Timestamp(startDateTime.getTime()));
-                                pstmt.setTimestamp(4, new java.sql.Timestamp(endDateTime.getTime()));
-                                pstmt.setString(5, request.getParameter("location"));
+                                pstmt.setString(8, request.getParameter("location"));
 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -57,19 +57,18 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE weekly_meeting SET end_time = ?, location = ? WHERE section_id = ? AND meeting_type = ?::meeting_enum AND start_time = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE weekly_meeting SET end_time = ?::time, end_date = ?, location = ? WHERE section_id = ? AND meeting_type = ?::meeting_enum AND start_time = ?::time AND start_date = ? AND day_of_week = ?::day_enum"));
                                 
-                                pstmt.setString(3, request.getParameter("section_id"));
-                                pstmt.setString(4, request.getParameter("meeting_type"));
+                                pstmt.setString(4, request.getParameter("section_id"));
+                                pstmt.setString(5, request.getParameter("meeting_type"));
 
-                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-                                java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
-                                java.util.Date endDateTime = dateTimeFormat.parse(request.getParameter("end_date") + " " + request.getParameter("end_time"));
-
-                                pstmt.setTimestamp(5, new java.sql.Timestamp(startDateTime.getTime()));
-                                pstmt.setTimestamp(1, new java.sql.Timestamp(endDateTime.getTime()));
-                                pstmt.setString(2, request.getParameter("location"));
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                pstmt.setString(6, request.getParameter("start_time"));
+                                pstmt.setDate(7, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+                                pstmt.setString(8, request.getParameter("day_of_week"));
+                                pstmt.setString(1, request.getParameter("end_time"));
+                                pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
+                                pstmt.setString(3, request.getParameter("location"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -81,12 +80,13 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM weekly_meeting WHERE section_id = ? AND meeting_type = ?::meeting_enum AND start_time = ?");
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM weekly_meeting WHERE section_id = ? AND meeting_type = ?::meeting_enum AND start_time = ?::time AND start_date = ? AND day_of_week = ?::day_enum");
                                 pstmt.setString(1, request.getParameter("section_id"));
                                 pstmt.setString(2, request.getParameter("meeting_type"));
-                                SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                                java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
-                                pstmt.setTimestamp(3, new java.sql.Timestamp(startDateTime.getTime()));
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                pstmt.setString(3, request.getParameter("start_time"));
+                                pstmt.setDate(4, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
+                                pstmt.setString(5, request.getParameter("day_of_week"));
 
                                 int rowCount = pstmt.executeUpdate();
 
@@ -105,9 +105,10 @@
                         <tr>
                             <th>Section ID</th>
                             <th>Meeting Type</th>
+                            <th>Day of Week</th>
                             <th>Start Date</th>
-                            <th>Start Time</th>
                             <th>End Date</th>
+                            <th>Start Time</th>
                             <th>End Time</th>
                             <th>Location</th>
                         </tr>
@@ -122,9 +123,20 @@
                                         <option value="Lab Sessions">Lab Session</option>
                                     </select>
                                 </th>
+                                <th>
+                                    <select name="day_of_week" id="day_of_week">
+                                        <option value="Monday">Monday</option>
+                                        <option value="Tuesday">Tuesday</option>
+                                        <option value="Wednesday">Wednesday</option>
+                                        <option value="Thursday">Thursday</option>
+                                        <option value="Friday">Friday</option>
+                                        <option value="Saturday">Saturday</option>
+                                        <option value="Sunday">Sunday</option>
+                                    </select>
+                                </th>
                                 <th><input type="date" name="start_date" required></th>
-                                <th><input type="time" name="start_time" required></th>
                                 <th><input type="date" name="end_date" required></th>
+                                <th><input type="time" name="start_time" required></th>
                                 <th><input type="time" name="end_time" required></th>
                                 <th><input value="" name="location" size="15" required></th>
                                 <th><input type="submit" value="Insert"></th>
@@ -133,23 +145,15 @@
                         <%
                             // Iterate over the ResultSet
                             while ( rs.next() ) {
-                                SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                SimpleDateFormat sdfOutputTime = new SimpleDateFormat("HH:mm");
-                                SimpleDateFormat sdfOutputDate = new SimpleDateFormat("yyyy-MM-dd");
-                                java.util.Date date = sdfInput.parse(rs.getString("start_time"));
-                                String startDate = sdfOutputDate.format(date);
-                                String startTime = sdfOutputTime.format(date);
-                                date = sdfInput.parse(rs.getString("end_time"));
-                                String endDate = sdfOutputDate.format(date);
-                                String endTime = sdfOutputTime.format(date);
                         %>
                             <tr>
                                 <form action="weekly_meeting.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
                                     <input type="hidden" value="<%= rs.getString("meeting_type") %>" name="meeting_type">
-                                    <input type="hidden" value="<%= startDate %>" name="start_date">
-                                    <input type="hidden" value="<%= startTime %>" name="start_time">
+                                    <input type="hidden" value="<%= rs.getString("start_date") %>" name="start_date">
+                                    <input type="hidden" value="<%= rs.getString("start_time") %>" name="start_time">
+                                    <input type="hidden" value="<%= rs.getString("day_of_week") %>" name="day_of_week">
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
                                     <td>
                                         <select name="meeting_type" id="meeting_type" disabled>
@@ -158,10 +162,21 @@
                                             <option value="Lab Sessions" <%=rs.getString("meeting_type").equals("Lab Sessions") ? "selected" : "" %>>Lab Session</option>
                                         </select>
                                     </td>
-                                    <th><input type="date" value="<%= startDate %>" name="start_date" disabled></th>
-                                    <th><input type="time" value="<%= startTime %>" name="start_time" disabled></th>
-                                    <th><input type="date" value="<%= endDate %>" name="end_date" required></th>
-                                    <th><input type="time" value="<%= endTime %>" name="end_time" required></th>
+                                    <td>
+                                        <select name="day_of_week" id="day_of_week" disabled>
+                                            <option value="Monday" <%=rs.getString("day_of_week").equals("Monday") ? "selected" : "" %>>Monday</option>
+                                            <option value="Tuesday" <%=rs.getString("day_of_week").equals("Tuesday") ? "selected" : "" %>>Tuesday</option>
+                                            <option value="Wednesday" <%=rs.getString("day_of_week").equals("Wednesday") ? "selected" : "" %>>Wednesday</option>
+                                            <option value="Thursday" <%=rs.getString("day_of_week").equals("Thursday") ? "selected" : "" %>>Thursday</option>
+                                            <option value="Friday" <%=rs.getString("day_of_week").equals("Friday") ? "selected" : "" %>>Friday</option>
+                                            <option value="Saturday" <%=rs.getString("day_of_week").equals("Saturday") ? "selected" : "" %>>Saturday</option>
+                                            <option value="Sunday" <%=rs.getString("day_of_week").equals("Sunday") ? "selected" : "" %>>Sunday</option>
+                                        </select>
+                                    </td>
+                                    <th><input type="date" value="<%= rs.getString("start_date") %>" name="start_date" disabled></th>
+                                    <th><input type="date" value="<%= rs.getString("end_date") %>" name="end_date" required></th>
+                                    <th><input type="time" value="<%= rs.getString("start_time") %>" name="start_time" disabled></th>
+                                    <th><input type="time" value="<%= rs.getString("end_time") %>" name="end_time" required></th>
                                     <td><input value="<%= rs.getString("location") %>" name="location" size="15" required></td>
                                     <td><input type="submit" value="Update"></td>
                                 </form>
@@ -169,8 +184,9 @@
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
                                     <input type="hidden" value="<%= rs.getString("meeting_type") %>" name="meeting_type">
-                                    <input type="hidden" value="<%= startDate %>" name="start_date">
-                                    <input type="hidden" value="<%= startTime %>" name="start_time">
+                                    <input type="hidden" value="<%= rs.getString("start_date") %>" name="start_date">
+                                    <input type="hidden" value="<%= rs.getString("start_time") %>" name="start_time">
+                                    <input type="hidden" value="<%= rs.getString("day_of_week") %>" name="day_of_week">
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>
