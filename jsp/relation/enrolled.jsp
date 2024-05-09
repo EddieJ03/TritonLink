@@ -31,12 +31,13 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO enrolled VALUES (?, ?, ?::grade_enum, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO enrolled VALUES (?, ?, ?, ?::grade_enum, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
                                 pstmt.setString(2, request.getParameter("section_id"));
-                                pstmt.setString(3, request.getParameter("grade"));
-                                pstmt.setInt(4, Integer.parseInt(request.getParameter("num_units")));
+                                pstmt.setString(3, request.getParameter("course_number"));
+                                pstmt.setString(4, request.getParameter("grade"));
+                                pstmt.setInt(5, Integer.parseInt(request.getParameter("num_units")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -47,12 +48,13 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE enrolled SET grade = ?::grade_enum, num_units = ? WHERE PID = ? AND section_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE enrolled SET grade = ?::grade_enum, num_units = ? WHERE PID = ? AND section_id = ? AND course_number = ?"));
                                 
                                 pstmt.setString(1, request.getParameter("grade"));
+                                pstmt.setInt(2, Integer.parseInt(request.getParameter("num_units")));
                                 pstmt.setString(3, request.getParameter("PID"));
                                 pstmt.setString(4, request.getParameter("section_id"));
-                                pstmt.setInt(2, Integer.parseInt(request.getParameter("num_units")));
+                                pstmt.setString(5, request.getParameter("course_number"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -64,9 +66,10 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM enrolled WHERE PID = ? AND section_id = ?");
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM enrolled WHERE PID = ? AND section_id = ? AND course_number = ?");
                                 pstmt.setString(1, request.getParameter("PID"));
                                 pstmt.setString(2, request.getParameter("section_id"));
+                                pstmt.setString(3, request.getParameter("course_number"));
 
                                 int rowCount = pstmt.executeUpdate();
 
@@ -84,6 +87,7 @@
                     <table>
                         <tr>
                             <th>PID</th>
+                            <th>Course Number</th>
                             <th>Section ID</th>
                             <th>Grade</th>
                             <th>Num Units</th>
@@ -92,6 +96,7 @@
                             <form action="enrolled.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" maxlength="10" required></th>
+                                <th><input value="" name="course_number" size="15" maxlength="50" required></th>
                                 <th><input value="" name="section_id" size="15" maxlength="50" required></th>
                                 <th>
                                     <select name="grade" id="grade">
@@ -125,9 +130,11 @@
                                 <form action="enrolled.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
                                     <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="15" disabled></td>
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="15" disabled></td>
                                     <td>
                                         <select name="grade" id="grade">
                                             <option value="A+" <%=rs.getString("grade").equals("A+") ? "selected" : "" %>>A+</option>
@@ -155,6 +162,7 @@
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>
