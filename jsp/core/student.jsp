@@ -111,8 +111,8 @@
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" required></th>
                                 <th><input value="" name="first_name" size="15" required></th>
-                                <th><input value="" name="middle_name" size="15" required></th>
-                                <th><input value="" name="last_name" size="15" required></th>
+                                <th><input value="" name="middle_name" size="15"></th>
+                                <th><input value="" name="last_name" size="15"></th>
                                 <th><input value="" name="ssn" size="10" required></th>
                                 <th><input type="checkbox" value="true" name="enrolled"></th>
                                 <th>
@@ -135,8 +135,8 @@
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
                                     <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
                                     <td><input value="<%= rs.getString("first_name") %>" name="first_name" size="15" required></td>
-                                    <td><input value="<%= rs.getString("middle_name") %>" name="middle_name" size="15" required></td>
-                                    <td><input value="<%= rs.getString("last_name") %>" name="last_name" size="15" required></td>
+                                    <td><input value="<%= rs.getString("middle_name") %>" name="middle_name" size="15"></td>
+                                    <td><input value="<%= rs.getString("last_name") %>" name="last_name" size="15"></td>
                                     <td><input value="<%= rs.getString("ssn") %>" name="ssn" size="10" required></td>
 
                                     <td><input type="checkbox" <%=rs.getString("enrolled").equals("t") ? "checked" : "" %> name="enrolled"></td>

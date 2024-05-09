@@ -49,14 +49,14 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE classes SET title = ?, course_number = ?, quarter = ?::quarter_enum, year = ?, enrollment_limit = ? WHERE section_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE classes SET title = ?, quarter = ?::quarter_enum, year = ?, enrollment_limit = ? WHERE course_number = ? AND section_id = ?"));
                                 
+                                pstmt.setString(5, request.getParameter("course_number"));
                                 pstmt.setString(6, request.getParameter("section_id"));
                                 pstmt.setString(1, request.getParameter("title"));
-                                pstmt.setString(2, request.getParameter("course_number"));
-                                pstmt.setString(3, request.getParameter("quarter"));
-                                pstmt.setInt(4, Integer.parseInt(request.getParameter("year")));
-                                pstmt.setInt(5, Integer.parseInt(request.getParameter("enrollment_limit")));
+                                pstmt.setString(2, request.getParameter("quarter"));
+                                pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
+                                pstmt.setInt(4, Integer.parseInt(request.getParameter("enrollment_limit")));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -67,9 +67,10 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM classes WHERE section_id = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("DELETE FROM classes WHERE course_number = ? AND section_id = ?"));
                                 
-                                pstmt.setString(1, request.getParameter("section_id"));
+                                pstmt.setString(1, request.getParameter("course_number"));
+                                pstmt.setString(2, request.getParameter("section_id"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -119,8 +120,9 @@
                                 <form action="classes.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
-                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="15" required></td>
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="15" disabled></td>
                                     <td><input value="<%= rs.getString("title") %>" name="title" size="15" required></td>
 
                                     <td>
@@ -138,6 +140,7 @@
                                 <form action="classes.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <td><input type="submit" value="Delete"></td>
                                 </form> 
                             </tr>
