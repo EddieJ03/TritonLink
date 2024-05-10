@@ -31,10 +31,11 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO waitlisted VALUES (?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO waitlisted VALUES (?, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
                                 pstmt.setString(2, request.getParameter("section_id"));
+                                pstmt.setString(3, request.getParameter("course_number"));
                                 pstmt.executeUpdate();
                                 conn.commit();
                                 conn.setAutoCommit(true);
@@ -44,9 +45,10 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM waitlisted WHERE PID = ? AND section_id = ?");
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM waitlisted WHERE PID = ? AND section_id = ? AND course_number = ?");
                                 pstmt.setString(1, request.getParameter("PID"));
                                 pstmt.setString(2, request.getParameter("section_id"));
+                                pstmt.setString(3, request.getParameter("course_number"));
 
                                 int rowCount = pstmt.executeUpdate();
 
@@ -65,12 +67,14 @@
                         <tr>
                             <th>PID</th>
                             <th>Section ID</th>
+                            <th>Course Number</th>
                         </tr>
                         <tr>
                             <form action="waitlisted.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" maxlength="10" required></th>
                                 <th><input value="" name="section_id" size="15" maxlength="50" required></th>
+                                <th><input value="" name="course_number" size="15" maxlength="50" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -83,8 +87,10 @@
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="15" disabled></td>
+                                    <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="15" disabled></td>
                                     <td><input type="submit" value="Delete"></td>
                                 </form>
                             </tr>
