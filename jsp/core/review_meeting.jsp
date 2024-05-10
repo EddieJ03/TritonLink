@@ -33,18 +33,19 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Attendance table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO review_meeting VALUES (?, ?, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO review_meeting VALUES (?, ?, ?, ?, ?)"));
 
                                 pstmt.setString(1, request.getParameter("section_id"));
+                                 pstmt.setString(2, request.getParameter("course_number"));
 
                                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                 java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
                                 java.util.Date endDateTime = dateTimeFormat.parse(request.getParameter("end_date") + " " + request.getParameter("end_time"));
 
-                                pstmt.setTimestamp(2, new java.sql.Timestamp(startDateTime.getTime()));
-                                pstmt.setTimestamp(3, new java.sql.Timestamp(endDateTime.getTime()));
-                                pstmt.setString(4, request.getParameter("location"));
+                                pstmt.setTimestamp(3, new java.sql.Timestamp(startDateTime.getTime()));
+                                pstmt.setTimestamp(4, new java.sql.Timestamp(endDateTime.getTime()));
+                                pstmt.setString(5, request.getParameter("location"));
 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -55,16 +56,17 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE review_meeting SET end_time = ?, location = ? WHERE section_id = ? AND start_time = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE review_meeting SET end_time = ?, location = ? WHERE section_id = ? AND course_number = ? AND start_time = ?"));
                                 
                                 pstmt.setString(3, request.getParameter("section_id"));
+                                pstmt.setString(4, request.getParameter("course_number"));
 
                                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                 java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
                                 java.util.Date endDateTime = dateTimeFormat.parse(request.getParameter("end_date") + " " + request.getParameter("end_time"));
 
-                                pstmt.setTimestamp(4, new java.sql.Timestamp(startDateTime.getTime()));
+                                pstmt.setTimestamp(5, new java.sql.Timestamp(startDateTime.getTime()));
                                 pstmt.setTimestamp(1, new java.sql.Timestamp(endDateTime.getTime()));
                                 pstmt.setString(2, request.getParameter("location"));
                                 
@@ -78,11 +80,12 @@
 
                                 // Create the prepared statement and use it to
                                 // DELETE the student FROM the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM review_meeting WHERE section_id = ? AND start_time = ?");
+                                PreparedStatement pstmt = conn.prepareStatement("DELETE FROM review_meeting WHERE section_id = ? AND course_number = ? AND start_time = ?");
                                 pstmt.setString(1, request.getParameter("section_id"));
+                                pstmt.setString(2, request.getParameter("course_number"));
                                 SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                                 java.util.Date startDateTime = dateTimeFormat.parse(request.getParameter("start_date") + " " + request.getParameter("start_time"));
-                                pstmt.setTimestamp(2, new java.sql.Timestamp(startDateTime.getTime()));
+                                pstmt.setTimestamp(3, new java.sql.Timestamp(startDateTime.getTime()));
 
                                 int rowCount = pstmt.executeUpdate();
 
@@ -100,6 +103,7 @@
                     <table>
                         <tr>
                             <th>Section ID</th>
+                            <th>Course Number</th>
                             <th>Start Date</th>
                             <th>Start Time</th>
                             <th>End Date</th>
@@ -110,6 +114,7 @@
                             <form action="review_meeting.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="section_id" size="10" required></th>
+                                <th><input value="" name="course_number" size="10" required></th>
                                 <th><input type="date" name="start_date" required></th>
                                 <th><input type="time" name="start_time" required></th>
                                 <th><input type="date" name="end_date" required></th>
@@ -135,9 +140,11 @@
                                 <form action="review_meeting.jsp" method="get">
                                     <input type="hidden" value="update" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <input type="hidden" value="<%= startDate %>" name="start_date">
                                     <input type="hidden" value="<%= startTime %>" name="start_time">
                                     <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="10" disabled></td>
+                                     <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="10" disabled></td>
                                     <th><input type="date" value="<%= startDate %>" name="start_date" disabled></th>
                                     <th><input type="time" value="<%= startTime %>" name="start_time" disabled></th>
                                     <th><input type="date" value="<%= endDate %>" name="end_date" required></th>
@@ -148,6 +155,7 @@
                                 <form action="review_meeting.jsp" method="get">
                                     <input type="hidden" value="delete" name="action">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
+                                    <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <input type="hidden" value="<%= startDate %>" name="start_date">
                                     <input type="hidden" value="<%= startTime %>" name="start_time">
                                     <td><input type="submit" value="Delete"></td>
