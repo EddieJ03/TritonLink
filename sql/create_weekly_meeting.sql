@@ -3,6 +3,7 @@ CREATE TYPE day_enum AS ENUM ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fri
 
 CREATE TABLE weekly_meeting (
     section_id VARCHAR(20) REFERENCES classes(section_id) ON DELETE CASCADE,
+    course_number VARCHAR(50) REFERENCES course(course_number) ON DELETE CASCADE,
     meeting_type meeting_enum,
     start_time time,
     start_date date,
@@ -10,5 +11,5 @@ CREATE TABLE weekly_meeting (
     end_date date,
     day_of_week day_enum,
     location VARCHAR(100),
-    PRIMARY KEY (section_id, meeting_type, start_time, start_date, day_of_week)
+    PRIMARY KEY (section_id, course_number, meeting_type, day_of_week)
 );
