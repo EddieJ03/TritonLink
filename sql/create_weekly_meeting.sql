@@ -1,5 +1,4 @@
 CREATE TYPE meeting_enum AS ENUM ('LE', 'DI', 'Lab Sessions');
-CREATE TYPE day_enum AS ENUM ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
 
 CREATE TABLE weekly_meeting (
     section_id VARCHAR(20),

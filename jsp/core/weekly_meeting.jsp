@@ -126,13 +126,13 @@
                                 </th>
                                 <th>
                                     <select name="day_of_week" id="day_of_week">
-                                        <option value="Monday">Monday</option>
-                                        <option value="Tuesday">Tuesday</option>
-                                        <option value="Wednesday">Wednesday</option>
-                                        <option value="Thursday">Thursday</option>
-                                        <option value="Friday">Friday</option>
-                                        <option value="Saturday">Saturday</option>
-                                        <option value="Sunday">Sunday</option>
+                                        <option value="Mon">Monday</option>
+                                        <option value="Tue">Tuesday</option>
+                                        <option value="Wed">Wednesday</option>
+                                        <option value="Thu">Thursday</option>
+                                        <option value="Fr">Friday</option>
+                                        <option value="Sat">Saturday</option>
+                                        <option value="Sun">Sunday</option>
                                     </select>
                                 </th>
                                 <th><input type="date" name="start_date" required></th>
@@ -165,13 +165,13 @@
                                     </td>
                                     <td>
                                         <select name="day_of_week" id="day_of_week" disabled>
-                                            <option value="Monday" <%=rs.getString("day_of_week").equals("Monday") ? "selected" : "" %>>Monday</option>
-                                            <option value="Tuesday" <%=rs.getString("day_of_week").equals("Tuesday") ? "selected" : "" %>>Tuesday</option>
-                                            <option value="Wednesday" <%=rs.getString("day_of_week").equals("Wednesday") ? "selected" : "" %>>Wednesday</option>
-                                            <option value="Thursday" <%=rs.getString("day_of_week").equals("Thursday") ? "selected" : "" %>>Thursday</option>
-                                            <option value="Friday" <%=rs.getString("day_of_week").equals("Friday") ? "selected" : "" %>>Friday</option>
-                                            <option value="Saturday" <%=rs.getString("day_of_week").equals("Saturday") ? "selected" : "" %>>Saturday</option>
-                                            <option value="Sunday" <%=rs.getString("day_of_week").equals("Sunday") ? "selected" : "" %>>Sunday</option>
+                                            <option value="Monday" <%=rs.getString("day_of_week").equals("Mon") ? "selected" : "" %>>Monday</option>
+                                            <option value="Tuesday" <%=rs.getString("day_of_week").equals("Tue") ? "selected" : "" %>>Tuesday</option>
+                                            <option value="Wednesday" <%=rs.getString("day_of_week").equals("Wed") ? "selected" : "" %>>Wednesday</option>
+                                            <option value="Thursday" <%=rs.getString("day_of_week").equals("Thu") ? "selected" : "" %>>Thursday</option>
+                                            <option value="Friday" <%=rs.getString("day_of_week").equals("Fri") ? "selected" : "" %>>Friday</option>
+                                            <option value="Saturday" <%=rs.getString("day_of_week").equals("Sat") ? "selected" : "" %>>Saturday</option>
+                                            <option value="Sunday" <%=rs.getString("day_of_week").equals("Sun") ? "selected" : "" %>>Sunday</option>
                                         </select>
                                     </td>
                                     <th><input type="date" value="<%= rs.getString("start_date") %>" name="start_date" required></th>
