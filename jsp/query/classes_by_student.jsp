@@ -84,8 +84,6 @@
                         <%
                             // Iterate over the ResultSet
                             while ( rs != null && rs.next() ) {
-
-                                System.out.println(rs.getString("course_number"));
                         %>
                             <tr>
                                 <td><%= rs.getString("ssn") %></td> 
