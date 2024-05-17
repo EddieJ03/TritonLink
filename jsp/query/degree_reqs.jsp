@@ -41,8 +41,9 @@
                                 statementStudent = conn.prepareStatement(("SELECT ssn, first_name, middle_name, last_name FROM student WHERE PID = ?"));
                                 statementStudent.setString(1, request.getParameter("PID"));
 
-                                statementDegree = conn.prepareStatement(("SELECT degree_id, degree_type, total_units FROM degree WHERE degree_id = ?"));
-                                statementDegree.setString(1, request.getParameter("degree_id"));
+                                statementDegree = conn.prepareStatement(("SELECT d.degree_id, d.degree_type, d.total_units - COALESCE(SUM(e.num_units), 0) AS remaining_units, d.total_units FROM degree d JOIN category c ON d.degree_id = c.degree_id JOIN category_course cc ON c.category_id = cc.category_id JOIN course co ON cc.course_number = co.course_number LEFT JOIN enrolled e ON co.course_number = e.course_number AND e.PID = ? AND e.grade NOT IN ('F', 'U', 'Incomplete') WHERE c.degree_id = ? AND c.is_concentration = FALSE GROUP BY d.degree_id;"));
+                                statementDegree.setString(1, request.getParameter("PID"));
+                                statementDegree.setString(2, request.getParameter("degree_id"));
 
                                 statementCategoryRemaining = conn.prepareStatement(("SELECT c.degree_id, c.category_name, c.required_units - COALESCE(SUM(e.num_units), 0) AS remaining_units, c.required_units FROM category c JOIN category_course cc ON c.category_id = cc.category_id JOIN course co ON cc.course_number = co.course_number LEFT JOIN enrolled e ON co.course_number = e.course_number AND e.PID = ? AND e.grade NOT IN ('F', 'U', 'Incomplete') WHERE c.degree_id = ? AND c.is_concentration = FALSE GROUP BY c.degree_id, c.category_id;"));
                                 statementCategoryRemaining.setString(2, request.getParameter("degree_id"));
@@ -115,6 +116,7 @@
                             <td><%= rsDegree.getString("degree_id") %></td>         
                             <td><%= rsDegree.getString("degree_type") %></td>   
                             <td><%= rsDegree.getString("total_units") %></td> 
+                            <td><%= rsDegree.getString("remaining_units") %></td>
                         </tr>
                         <%
                             }
