@@ -1,5 +1,5 @@
 create table grade_conversion(
-    LETTER_GRADE CHAR(2) NOT NULL,
+    LETTER_GRADE CHAR(2) NOT NULL PRIMARY KEY,
     NUMBER_GRADE DECIMAL(2,1)
 );
 insert into grade_conversion values('A+', 4.3);

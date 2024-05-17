@@ -105,7 +105,7 @@
                         </tr>
                         <%
                             // Iterate over the ResultSet
-                            while ( rsStudent.next() && rsDegree.next()) {
+                            while ( rsStudent != null && rsStudent.next() && rsDegree.next()) {
                         %>
                         <tr>
                             <td><%= rsStudent.getString("ssn") %></td> 
@@ -127,7 +127,7 @@
                         </tr>
                         <%
                             // Iterate over the ResultSet
-                            while ( rsCategoryRemaining.next()) {
+                            while ( rsCategoryRemaining != null && rsCategoryRemaining.next()) {
                         %>
                         <tr>
                             <td><%= rsCategoryRemaining.getString("category_name") %></td>

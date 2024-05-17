@@ -41,6 +41,7 @@ INSERT INTO category_course (course_number, category_id) VALUES
 -- Insert additional data into classes table
 INSERT INTO classes (section_id, course_number, title, quarter, year, enrollment_limit) VALUES
 ('S4', 'CSE103', 'Data Structures', 'Fall', 2023, 60),
+('S999', 'CSE103', 'Data Structures', 'Fall', 2024, 60),
 ('S5', 'CSE104', 'Computer Networks', 'Winter', 2024, 50),
 ('S6', 'ECE202', 'Digital Signal Processing', 'Spring', 2024, 40),
 ('S20', 'ECE202', 'Digital Signal Processing', 'Fall', 2025, 40),
@@ -51,6 +52,8 @@ INSERT INTO classes (section_id, course_number, title, quarter, year, enrollment
 -- Insert additional data into enrolled table
 INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('S123456789', 'S4', 'CSE103', 'B', 4),
+('S123456789', 'S6', 'ECE202', 'A', 4),
+('S123456789', 'S8', 'DS101', 'B', 4),
 ('S123456789', 'S5', 'CSE104', 'Incomplete', 3),
 ('S987654321', 'S6', 'ECE202', 'A-', 4),
 ('S987654321', 'S7', 'ECE203', 'B+', 3),
