@@ -13,3 +13,12 @@ if [ ${#files[@]} -gt 0 ]; then
 else
     echo "No files found matching the pattern create_*.SQL"
 fi
+
+# Run psql command if matching files exist
+if [ ${#files[@]} -gt 0 ]; then
+    for file in "${files[@]}"; do
+        psql -d postgresql://postgres:edward@localhost:5432/cse132b -f "$file"
+    done
+else
+    echo "No files found matching the pattern create_*.SQL"
+fi
