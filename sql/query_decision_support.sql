@@ -28,7 +28,7 @@ FROM faculty f
 	JOIN classes cl ON te.section_id = cl.section_id
 	JOIN enrolled e ON te.section_id = e.section_id
 	LEFT JOIN grade_conversion g ON CAST(e.grade AS CHAR(2)) = g.LETTER_GRADE
-WHERE f.name = 'Sarah Johnson' AND cl.course_number = 'CSE1010'
+WHERE f.name = ? AND cl.course_number = ?
 GROUP BY f.name, te.course_number;
 
 
