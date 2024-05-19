@@ -1,27 +1,28 @@
 -- I added ? for you, you can replace them with actual stuff if u wanna test
+-- For grades, there is no D+ or D- in the table, so I left them out here too.
 
 -- #2 - takes quarter, year, faculty name in that order
 SELECT f.name, te.course_number, 
-	SUM(CASE WHEN e.grade = 'A' THEN 1 ELSE 0 END) AS A,
-	SUM(CASE WHEN e.grade = 'B' THEN 1 ELSE 0 END) AS B,
-	SUM(CASE WHEN e.grade = 'C' THEN 1 ELSE 0 END) AS C,
-	SUM(CASE WHEN e.grade = 'D' THEN 1 ELSE 0 END) AS D,
-	SUM(CASE WHEN e.grade NOT IN ('A', 'B', 'C','D') THEN 1 ELSE 0 END) AS other
+	SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,
+	SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
+	SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
+	SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D,
+	SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other
 
 FROM faculty f
 	JOIN teaches te ON f.name = te.faculty_name
-	JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = ? AND cl.year = ?
+	JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = 'Fall' AND cl.year = 2024
 	JOIN enrolled e ON te.section_id = e.section_id
-WHERE f.name = ?
+WHERE f.name = 'John Smith'
 GROUP BY f.name, te.course_number;
 
 -- #3 and #5 - takes faculty name and course number in that order
 SELECT f.name, te.course_number, 
-	SUM(CASE WHEN e.grade = 'A' THEN 1 ELSE 0 END) AS A,
-	SUM(CASE WHEN e.grade = 'B' THEN 1 ELSE 0 END) AS B,
-	SUM(CASE WHEN e.grade = 'C' THEN 1 ELSE 0 END) AS C,
-	SUM(CASE WHEN e.grade = 'D' THEN 1 ELSE 0 END) AS D,
-	SUM(CASE WHEN e.grade NOT IN ('A', 'B', 'C','D') THEN 1 ELSE 0 END) AS other,
+	SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,
+	SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
+	SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
+	SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D,
+	SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other
 	AVG(g.NUMBER_GRADE) as gpa
 FROM faculty f 
 	JOIN teaches te ON f.name = te.faculty_name
@@ -34,11 +35,11 @@ GROUP BY f.name, te.course_number;
 
 -- #4 - takes course number
 SELECT cl.course_number, 
-	SUM(CASE WHEN e.grade = 'A' THEN 1 ELSE 0 END) AS A,
-	SUM(CASE WHEN e.grade = 'B' THEN 1 ELSE 0 END) AS B,
-	SUM(CASE WHEN e.grade = 'C' THEN 1 ELSE 0 END) AS C,
-	SUM(CASE WHEN e.grade = 'D' THEN 1 ELSE 0 END) AS D,
-	SUM(CASE WHEN e.grade NOT IN ('A', 'B', 'C','D') THEN 1 ELSE 0 END) AS other
+	SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,
+	SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
+	SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
+	SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D,
+	SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other
 
 FROM classes cl
 	JOIN enrolled e ON cl.section_id = e.section_id

@@ -43,9 +43,9 @@ INSERT INTO student (PID, first_name, middle_name, last_name, ssn, enrolled, res
 
 -- Insert enrolled
 INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES 
-('1234567890', 'CSE101-01', 'CSE1010', 'A', 4),
+('1234567890', 'CSE101-01', 'CSE1010', 'A+', 4),
 ('2345678901', 'CSE101-01', 'CSE1010', 'D', 4),
-('3456789012', 'CSE101-01', 'CSE1010', 'C', 4),
+('3456789012', 'CSE101-01', 'CSE1010', 'C-', 4),
 ('4567890123', 'CSE101-02', 'CSE1010', 'A', 4),
 ('5678901234', 'CSE101-02', 'CSE1010', 'B', 4),
 ('1234567890', 'MAT200-01', 'MAT200', 'A', 3),
@@ -53,7 +53,7 @@ INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('3456789012', 'MAT200-01', 'MAT200', 'C', 3),
 ('4567890123', 'MAT200-02', 'MAT200', 'A', 3),
 ('5678901234', 'MAT200-02', 'MAT200', 'B', 3),
-('6789012345', 'CSE101-03', 'CSE1010', 'B', 4),
+('6789012345', 'CSE101-03', 'CSE1010', 'B+', 4),
 ('7890123456', 'CSE101-03', 'CSE1010', 'F', 4),
 ('8901234567', 'CSE101-03', 'CSE1010', 'A', 4),
 ('9012345678', 'CSE101-04', 'CSE1010', 'B', 4),
