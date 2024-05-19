@@ -11,9 +11,9 @@ SELECT f.name, te.course_number,
 
 FROM faculty f
 	JOIN teaches te ON f.name = te.faculty_name
-	JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = 'Fall' AND cl.year = 2024
+	JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = ? AND cl.year = ?
 	JOIN enrolled e ON te.section_id = e.section_id
-WHERE f.name = 'John Smith'
+WHERE f.name = ?
 GROUP BY f.name, te.course_number;
 
 -- #3 and #5 - takes faculty name and course number in that order
