@@ -15,7 +15,7 @@ FROM faculty f
 WHERE f.name = ?
 GROUP BY f.name, te.course_number;
 
--- #3 and #6 - takes faculty name and course number in that order
+-- #3 and #5 - takes faculty name and course number in that order
 SELECT f.name, te.course_number, 
 	SUM(CASE WHEN e.grade = 'A' THEN 1 ELSE 0 END) AS A,
 	SUM(CASE WHEN e.grade = 'B' THEN 1 ELSE 0 END) AS B,
