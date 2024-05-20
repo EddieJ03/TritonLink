@@ -33,11 +33,11 @@ INSERT INTO review_meeting (section_id, course_number, start_time, end_time, loc
 
 INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('A123456789', '001', 'CSE100', 'Incomplete', 4),
-('A987654321', '002', 'CSE110', 'Incomplete', 4),
-('A112233445', '003', 'CSE120', 'Incomplete', 4),
 ('A223344556', '001', 'CSE100', 'Incomplete', 4),
+('A223344556', '003', 'CSE120', 'Incomplete', 4),
 ('A334455667', '001', 'CSE100', 'Incomplete', 4),
 ('A445566778', '002', 'CSE110', 'Incomplete', 4),
 ('A556677889', '002', 'CSE110', 'Incomplete', 4),
 ('A667788990', '003', 'CSE120', 'Incomplete', 4),
-('A223344556', '003', 'CSE120', 'Incomplete', 4);
+('A987654321', '002', 'CSE110', 'Incomplete', 4),
+('A112233445', '003', 'CSE120', 'Incomplete', 4);
