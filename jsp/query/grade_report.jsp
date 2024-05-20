@@ -43,8 +43,10 @@
                                 rs = statement.executeQuery();
 
                                 // cumulative 
+
+                                // COALESCE NULL TO 0
                                 statement = conn.prepareStatement(
-                                    "SELECT SUM(e.num_units * co.NUMBER_GRADE) / SUM(e.num_units) AS cumulative_grade FROM student st JOIN enrolled e ON st.PID = e.PID JOIN classes cl ON e.course_number = cl.course_number AND e.section_id = cl.section_id JOIN course c ON c.course_number = cl.course_number JOIN grade_conversion co ON CAST(e.grade AS CHAR(2)) = co.LETTER_GRADE WHERE st.ssn = ? AND c.letter_grade = TRUE AND e.grade != 'Incomplete';"
+                                    "SELECT COALESCE(SUM(e.num_units * co.NUMBER_GRADE) / SUM(e.num_units), 0) AS cumulative_grade FROM student st JOIN enrolled e ON st.PID = e.PID JOIN classes cl ON e.course_number = cl.course_number AND e.section_id = cl.section_id JOIN course c ON c.course_number = cl.course_number JOIN grade_conversion co ON CAST(e.grade AS CHAR(2)) = co.LETTER_GRADE WHERE st.ssn = ? AND c.letter_grade = TRUE AND e.grade != 'Incomplete';"
                                 );
 
                                 statement.setString(1, request.getParameter("ssn"));
@@ -52,7 +54,7 @@
                                 cumulativeGrade = statement.executeQuery();
 
                                 // grade per year + quarter
-                                statement = conn.prepareStatement("SELECT cl.year, cl.quarter, SUM(e.num_units * co.NUMBER_GRADE) / SUM(e.num_units) AS grade FROM student st JOIN enrolled e ON st.PID = e.PID JOIN classes cl ON e.course_number = cl.course_number AND e.section_id = cl.section_id JOIN course c ON c.course_number = cl.course_number JOIN grade_conversion co ON CAST(e.grade AS CHAR(2)) = co.LETTER_GRADE WHERE st.ssn = ? AND c.letter_grade = TRUE AND e.grade <> 'Incomplete' GROUP BY cl.year, cl.quarter;");
+                                statement = conn.prepareStatement("SELECT cl.year, cl.quarter, COALESCE(SUM(e.num_units * co.NUMBER_GRADE) / SUM(e.num_units), 0) AS grade FROM student st JOIN enrolled e ON st.PID = e.PID JOIN classes cl ON e.course_number = cl.course_number AND e.section_id = cl.section_id JOIN course c ON c.course_number = cl.course_number JOIN grade_conversion co ON CAST(e.grade AS CHAR(2)) = co.LETTER_GRADE WHERE st.ssn = ? AND c.letter_grade = TRUE AND e.grade <> 'Incomplete' GROUP BY cl.year, cl.quarter;");
 
                                 statement.setString(1, request.getParameter("ssn"));
 
