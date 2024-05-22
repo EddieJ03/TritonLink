@@ -24,6 +24,9 @@
                         ResultSet sectionRS = null;
                         PreparedStatement sectionStatement = null;
 
+                        Statement classTitleStatement = null;
+                        ResultSet classTitleRS = null;
+
                         // Make a connection to the PostgreSQL datasource
                         try {
                             conn = DriverManager.getConnection(
@@ -44,7 +47,7 @@
                                 rs = statement.executeQuery();
                             }
 
-                            if(action != null && action.equals("find")) {
+                            if(action != null && (action.equals("find") || action.equals("roster"))) {
                                 courseStatement = conn.prepareStatement("SELECT course_number FROM classes WHERE title = ? AND quarter = ?::quarter_enum AND year = ?");
                                 courseStatement.setString(1, request.getParameter("title"));
                                 courseStatement.setString(2, request.getParameter("quarter"));
@@ -59,13 +62,24 @@
 
                                 sectionRS = sectionStatement.executeQuery();
                             }
-
+                            classTitleStatement = conn.createStatement();
+                            classTitleRS = classTitleStatement.executeQuery("SELECT DISTINCT title FROM classes;");
                     %>
                     <table>
                         <tr>
                             <form action="class_roster.jsp" method="get">
                                 <input type="hidden" value="find" name="action">
-                                <th><input value="" name="title" size="15" required></th>
+                                <th>
+                                    <select name="title" id="title">
+                                        <%
+                                            while(classTitleRS != null && classTitleRS.next()) {
+                                        %>
+                                                <option value="<%= String.format("%s", classTitleRS.getString("title")) %>" <%=classTitleRS.getString("title").equals(request.getParameter("title")) ? "selected" : "" %>><%= classTitleRS.getString("title") %></option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </th>
                                 <th>
                                     <select name="quarter" id="quarter" required>
                                         <option value="Fall" <%=(request.getParameter("quarter") == null || request.getParameter("quarter").equals("Fall")) ? "selected" : "" %>>Fall</option>
@@ -78,10 +92,21 @@
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
+                        <% if (courseRS != null) { %>
                         <tr>
+                            <th>Course Number</th>
+                            <th>Section ID</th>
+                        </tr>
+                        <% } %>
+                        <tr>
+
                             <form action="class_roster.jsp" method="get">
                                 <input type="hidden" value="roster" name="action">
+                                <input type="hidden" value="<%= String.format("%s", request.getParameter("title")) %>" name="title">
+                                <input type="hidden" value="<%= String.format("%s", request.getParameter("quarter")) %>" name="quarter">
+                                <input type="hidden" value="<%= String.format("%s", request.getParameter("year")) %>" name="year">
                                 <th>
+                                <% if (courseRS != null) { %>
                                     <select name="course_number" id="course_number">
                                         <%
                                             while(courseRS != null && courseRS.next()) {
@@ -91,8 +116,12 @@
                                             }
                                         %>
                                     </select>
+                                <% } else { %>
+                                No course sections found.
+                                <% } %>
                                 </th>
                                 <th>
+                                <% if (courseRS != null || sectionRS != null) { %>
                                     <select name="section_id" id="section_id">
                                         <%
                                             while(sectionRS != null && sectionRS.next()) {
@@ -102,10 +131,15 @@
                                             }
                                         %>
                                     </select>
+                                    <% }  %>
                                 </th>
+                                <% if (courseRS != null || sectionRS != null) { %>
                                 <th><input type="submit" value="Get Roster"></th>
+                                <% }  %>
                             </form>
+                            
                         </tr>
+                        <% if (rs != null) { %>
                         <tr>
                             <th>PID</th>
                             <th>SSN</th>
@@ -137,6 +171,7 @@
                         <%
                             }
                         %>
+                        <% } %>
                     </table>
                     <%
                             // Close the ResultSet
