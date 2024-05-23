@@ -8,7 +8,8 @@ INSERT INTO classes (section_id, course_number, title, quarter, year, enrollment
 ('001', 'CSE100', 'Advanced Data Structures', 'Spring', 2024, 100),
 ('002', 'CSE110', 'Software Engineering', 'Spring', 2024, 80),
 ('003', 'CSE120', 'Operating Systems', 'Spring', 2024, 60),
-('004', 'CSE130', 'Programming Languages', 'Spring', 2024, 60);
+('004', 'CSE130', 'Programming Languages', 'Spring', 2024, 60),
+('005', 'CSE130', 'Programming Languages', 'Spring', 2024, 60);
 
 INSERT INTO student (PID, first_name, middle_name, last_name, ssn, enrolled, residency) VALUES
 -- ('A123456789', 'John', 'M', 'Doe', '123-45-6789', TRUE, 'California'),
@@ -27,7 +28,8 @@ INSERT INTO weekly_meeting (section_id, course_number, meeting_type, start_time,
 ('002', 'CSE110', 'Lab Sessions', '14:00:00', '2024-04-01', '16:00:00', '2024-06-07', 'Thu', 'Room 202'),
 ('003', 'CSE120', 'LE', '10:00:00', '2024-04-01', '11:30:00', '2024-06-07', 'Mon', 'Room 301'),
 ('003', 'CSE120', 'DI', '15:00:00', '2024-04-01', '16:30:00', '2024-06-07', 'Wed', 'Room 302'),
-('004', 'CSE130', 'LE', '15:00:00', '2024-04-01', '15:50:00', '2024-06-07', 'Wed', 'Room 302');
+('004', 'CSE130', 'LE', '15:00:00', '2024-04-01', '15:50:00', '2024-06-07', 'Wed', 'Room 302'),
+('005', 'CSE130', 'LE', '17:00:00', '2024-04-01', '18:00:00', '2024-06-07', 'Wed', 'Room 302');
 
 INSERT INTO review_meeting (section_id, course_number, start_time, end_time, location) VALUES
 ('001', 'CSE100', '2024-05-01 10:00:00', '2024-05-01 12:00:00', 'Room 101'),
