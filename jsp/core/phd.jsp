@@ -31,7 +31,7 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO PhD VALUES (?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(("INSERT INTO PhD VALUES (?, ?, ?)"));
                                 
                                 pstmt.setString(1, request.getParameter("PID"));
                                 if(request.getParameter("pre_candidacy") != null)
@@ -39,6 +39,8 @@
                                 else
                                     pstmt.setBoolean(2, false);
                                 
+                                pstmt.setString(3, request.getParameter("advisor"));
+
                                 pstmt.executeUpdate();
                                 conn.commit();
                                 conn.setAutoCommit(true);
@@ -47,13 +49,15 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE PhD SET pre_candidacy = ? WHERE PID = ?"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE PhD SET pre_candidacy = ?, advisor = ? WHERE PID = ?"));
                                 
-                                pstmt.setString(2, request.getParameter("PID"));
+                                pstmt.setString(3, request.getParameter("PID"));
                                 if(request.getParameter("pre_candidacy") != null)
                                     pstmt.setBoolean(1, true);
                                 else
                                     pstmt.setBoolean(1, false);
+
+                                pstmt.setString(2, request.getParameter("advisor"));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
@@ -85,12 +89,14 @@
                         <tr>
                             <th>PID</th>
                             <th>Pre Candidacy</th>
+                            <th>Advisor</th>
                         </tr>
                         <tr>
                             <form action="phd.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
                                 <th><input value="" name="PID" size="10" required></th>
                                 <th><input type="checkbox" value="true" name="pre_candidacy" size="10"></th>
+                                <th><input value="" name="advisor" size="10" required></th>
                                 <th><input type="submit" value="Insert"></th>
                             </form>
                         </tr>
@@ -104,6 +110,7 @@
                                     <input type="hidden" value="<%= rs.getString("PID") %>" name="PID">
                                     <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
                                     <td><input type="checkbox" <%=rs.getString("pre_candidacy").equals("t") ? "checked" : "" %> name="pre_candidacy"></td>
+                                    <td><input value="<%= rs.getString("advisor") %>" name="advisor"></td>
                                     <td><input type="submit" value="Update"></td>
                                 </form>
                                 <form action="phd.jsp" method="get">
