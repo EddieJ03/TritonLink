@@ -13,3 +13,4 @@ CREATE TABLE weekly_meeting (
     FOREIGN KEY (section_id, course_number) REFERENCES classes(section_id, course_number) ON DELETE CASCADE,
     PRIMARY KEY (section_id, course_number, meeting_type, day_of_week)
 );
+
