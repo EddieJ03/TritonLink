@@ -11,8 +11,10 @@ CREATE TABLE teaches (
 CREATE OR REPLACE FUNCTION check_meeting_conflict() RETURNS TRIGGER AS $$
 DECLARE
     conflicting_weekly_meeting BOOLEAN;
+    conflicting_review_meeting BOOLEAN;
+    conflicting_weekly_and_review_meeting BOOLEAN;
 BEGIN
-    -- Check for weekly meeting conflicts
+    -- Check for conflicts between weekly meetings
     SELECT EXISTS (
         /* 
         Step 1: Identify All Meetings Of Classes The Teacher is Currently Teaching
@@ -41,8 +43,100 @@ BEGIN
         WHERE ctm.day_of_week = wttm.day_of_week AND (ctm.start_time, ctm.end_time) OVERLAPS (wttm.start_time, wttm.end_time)
     ) INTO conflicting_weekly_meeting;
 
+    -- Check for conflicts between review meetings
+    SELECT EXISTS (
+        /* 
+        Step 1: Identify All Review Meetings Of Classes The Teacher is Currently Teaching
+        */
+        WITH CurrentReviewMeetings AS (
+            SELECT * FROM teaches t
+            JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
+            WHERE t.faculty_name = NEW.faculty_name
+        )
+
+        /* 
+        Step 2: Identify All Review Meetings Of Class Teacher WANTS to teach
+        */
+        , WantsToTeachReviewMeetings AS (
+            SELECT *
+            FROM review_meeting rm
+            WHERE rm.section_id = NEW.section_id AND rm.course_number = NEW.course_number
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT crm.*, wttrm.*
+        FROM CurrentReviewMeetings crm, WantsToTeachReviewMeetings wttrm 
+        WHERE (crm.start_time, crm.end_time) OVERLAPS (wttrm.start_time, wttrm.end_time)
+    ) INTO conflicting_review_meeting;
+
+    
+    SELECT EXISTS (
+        /* 
+        Step 1: Identify All Review Meetings Of Classes The Teacher is Currently Teaching
+        */
+        WITH CurrentReviewMeetings AS (
+            SELECT * FROM teaches t
+            JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
+            WHERE t.faculty_name = NEW.faculty_name
+        )
+
+        /* 
+        Step 2: Identify All Meetings Of Class Teacher WANTS to teach
+        */
+        , WantsToTeachMeetings AS (
+            SELECT *
+            FROM weekly_meeting wm
+            WHERE wm.section_id = NEW.section_id AND wm.course_number = NEW.course_number
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT crm.*, wttm.*
+        FROM CurrentReviewMeetings crm, WantsToTeachMeetings wttm 
+        WHERE wttm.day_of_week = TO_CHAR(crm.start_time, 'Dy')::day_enum AND (wttm.start_time, wttm.end_time) OVERLAPS (TO_CHAR(crm.start_time, 'HH24:MI:SS'), TO_CHAR(crm.end_time, 'HH24:MI:SS'))
+    ) OR EXISTS (
+        /* 
+        Step 1: Identify All Weekly Meetings Of Classes The Teacher is Currently Teaching
+        */
+        WITH CurrentTeachingMeetings AS (
+            SELECT * FROM teaches t
+            JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
+            WHERE t.faculty_name = NEW.faculty_name
+        )
+
+        /* 
+        Step 2: Identify All Review Meetings Of Class Teacher WANTS to teach
+        */
+        , WantsToTeachReviewMeetings AS (
+            SELECT *
+            FROM review_meeting rm
+            WHERE rm.section_id = NEW.section_id AND rm.course_number = NEW.course_number
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT ctm.*, wttrm.*
+        FROM CurrentTeachingMeetings ctm, WantsToTeachReviewMeetings wttrm 
+        WHERE ctm.day_of_week = TO_CHAR(wttrm.start_time, 'Dy')::day_enum AND (ctm.start_time, ctm.end_time) OVERLAPS (TO_CHAR(wttrm.start_time, 'HH24:MI:SS'), TO_CHAR(wttrm.end_time, 'HH24:MI:SS'))
+    ) INTO conflicting_weekly_and_review_meeting;
+
     IF conflicting_weekly_meeting THEN
-        RAISE EXCEPTION 'Professor % has a weekly meeting conflict with the new class.', NEW.faculty_name;
+        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with the weekly meeting of the new class.', NEW.faculty_name;
+    END IF;
+
+    IF conflicting_review_meeting THEN
+        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with the review meeting of the new class.', NEW.faculty_name;
+    END IF;
+
+    IF conflicting_weekly_and_review_meeting THEN
+        RAISE EXCEPTION 'Professor % currently has a review meeting or regular meeting that conflicts with the weekly meeting or review meeting of the new class. (or vice versa)', NEW.faculty_name;
     END IF;
 
     RETURN NEW;
