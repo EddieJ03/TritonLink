@@ -66,6 +66,7 @@
                         <tr>
                             <th>Student ID</th>
                             <th>Degree ID</th>
+                        </tr>
                         <tr>
                             <form action="degree_reqs.jsp" method="get">
                                 <input type="hidden" value="find" name="action">
