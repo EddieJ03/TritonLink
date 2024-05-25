@@ -70,7 +70,12 @@
                     %>
                     <table>
                         <tr>
-                            <form action="decision_support.jsp" method="get">
+                            <th>Quarter</th>
+                            <th>Year</th>
+                            <th>Professor</th>
+                        </tr>
+                        <tr>
+                            <form id="cpq" action="decision_support.jsp" method="get">
                                 <input type="hidden" value="cpq" name="action">
                                 <th>
                                     <select name="quarter" id="quarter" required>
@@ -81,12 +86,12 @@
                                     </select>
                                 </th>
                                 <th><input type="number"  value="<%= request.getParameter("year") == null ? 2024 : request.getParameter("year") %>" name="year" size="15" required></th>
-                                <th><label for="professor">Professor:</label>&nbsp;<input value="" name="professor" size="15" required></th>
+                                <th><input value="<%= (request.getParameter("professor") == null || request.getParameter("action") == null || !request.getParameter("action").equals("cpq")) ? "" : request.getParameter("professor") %>" name="professor" size="15" required></th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
                         <tr>
-                            <th>Professor Name</th>
+                            <th>Professor</th>
                             <th>Course Number</th>
                             <th>A</th>
                             <th>B</th>
@@ -115,15 +120,19 @@
                     <br/>
                     <table>
                         <tr>
+                            <th>Professor</th>
+                            <th>Course Number</th>
+                        </tr>
+                        <tr>
                             <form action="decision_support.jsp" method="get">
                                 <input type="hidden" value="course and professor" name="action">
-                                <th><label for="professor">Professor:</label>&nbsp;<input value="" name="professor" size="15" required></th>
-                                <th><label for="course_number">Course Number:</label>&nbsp;<input value="" name="course_number" size="15" required></th>
+                                <th><input value="<%= (request.getParameter("professor") == null || request.getParameter("action") == null || !request.getParameter("action").equals("course and professor")) ? "" : request.getParameter("professor") %>" name="professor" size="15" required></th>
+                                <th><input value="<%= (request.getParameter("course_number") == null || request.getParameter("action") == null || !request.getParameter("action").equals("course and professor")) ? "" : request.getParameter("course_number") %>" name="course_number" size="15" required></th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
                         <tr>
-                            <th>Professor Name</th>
+                            <th>Professor</th>
                             <th>Course Number</th>
                             <th>A</th>
                             <th>B</th>
@@ -154,9 +163,12 @@
                     <br/>
                     <table>
                         <tr>
+                            <th>Course Number</th>
+                        </tr>
+                        <tr>
                             <form action="decision_support.jsp" method="get">
                                 <input type="hidden" value="course" name="action">
-                                <th><input value="" name="course_number" size="15" required></th>
+                                <th><input value="<%= (request.getParameter("course_number") == null || request.getParameter("action") == null || !request.getParameter("action").equals("course")) ? "" : request.getParameter("course_number") %>" name="course_number" size="15" required></th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
