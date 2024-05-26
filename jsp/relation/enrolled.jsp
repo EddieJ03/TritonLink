@@ -133,8 +133,8 @@
                                     <input type="hidden" value="<%= rs.getString("course_number") %>" name="course_number">
                                     <input type="hidden" value="<%= rs.getString("section_id") %>" name="section_id">
                                     <td><input value="<%= rs.getString("PID") %>" name="PID" size="10" disabled></td>
-                                    <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="15" disabled></td>
                                     <td><input value="<%= rs.getString("course_number") %>" name="course_number" size="15" disabled></td>
+                                    <td><input value="<%= rs.getString("section_id") %>" name="section_id" size="15" disabled></td>
                                     <td>
                                         <select name="grade" id="grade">
                                             <option value="A+" <%=rs.getString("grade").equals("A+") ? "selected" : "" %>>A+</option>
