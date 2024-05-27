@@ -8,5 +8,5 @@ CREATE TABLE review_meeting (
     location VARCHAR(100),
     FOREIGN KEY (section_id, course_number) REFERENCES classes(section_id, course_number) ON DELETE CASCADE,
     PRIMARY KEY (section_id, course_number, start_time),
-    CHECK (end_time > start_time)
+    CHECK (end_time > start_time AND end_time::date = start_time::date)
 );
