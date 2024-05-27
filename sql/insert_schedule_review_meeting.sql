@@ -33,7 +33,7 @@ INSERT INTO weekly_meeting (section_id, course_number, meeting_type, start_time,
 
 INSERT INTO review_meeting (section_id, course_number, start_time, end_time, location) VALUES
 ('001', 'CSE100', '2024-05-01 10:00:00', '2024-05-01 12:00:00', 'Room 101'),
-('001', 'CSE100', '2024-05-03 10:00:00', '2024-05-01 12:00:00', 'Room 101'),
+-- ('001', 'CSE100', '2024-05-03 10:00:00', '2024-05-01 12:00:00', 'Room 101'),
 ('002', 'CSE110', '2024-05-02 16:00:00', '2024-05-02 17:00:00', 'Room 201'),
 ('003', 'CSE120', '2024-05-03 10:00:00', '2024-05-03 12:00:00', 'Room 301'),
 -- ('003', 'CSE120', '2024-05-03 11:00:00', '2024-05-03 13:00:00', 'Room 303'),

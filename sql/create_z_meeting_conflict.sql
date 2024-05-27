@@ -71,7 +71,8 @@ BEGIN
     SELECT rm1.section_id, NEW.section_id INTO conflicting_review_meeting_a, conflicting_review_meeting_b
         FROM review_meeting rm1
     WHERE (rm1.start_time, rm1.end_time) OVERLAPS (NEW.start_time, NEW.end_time)
-        AND (rm1.location = NEW.location OR rm1.section_id = NEW.section_id);
+        AND (rm1.location = NEW.location OR rm1.section_id = NEW.section_id) 
+        AND NOT (rm1.section_id = NEW.section_id AND rm1.course_number = NEW.course_number AND rm1.start_time = NEW.start_time);
 
 
     IF conflicting_weekly_review_meeting_a IS NOT NULL AND conflicting_weekly_review_meeting_b IS NOT NULL THEN
