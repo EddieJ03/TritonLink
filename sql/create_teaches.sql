@@ -10,11 +10,16 @@ CREATE TABLE teaches (
 
 CREATE OR REPLACE FUNCTION check_meeting_conflict() RETURNS TRIGGER AS $$
 DECLARE
+    class_already_taught BOOLEAN;
     conflicting_weekly_meeting BOOLEAN;
     conflicting_review_meeting BOOLEAN;
     conflicting_weekly_and_review_meeting BOOLEAN;
-    common_date DATE := '2000-01-01';
+    common_date DATE := '2000-01-01'; -- just for OVERLAPS comparison with TIME, otherwise it doesn't work I think
 BEGIN
+    SELECT EXISTS (
+        SELECT * FROM Teaches WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id AND t.course_number = NEW.section_id
+    ) INTO class_already_taught
+
     -- Check for conflicts between weekly meetings
     SELECT EXISTS (
         /* 
