@@ -94,3 +94,164 @@ CREATE TRIGGER trigger_check_review_meeting_conflict
 BEFORE INSERT OR UPDATE ON review_meeting
 FOR EACH ROW
 EXECUTE FUNCTION check_new_review_meeting_conflict();
+
+---------------------------------------------------------------------------------------
+
+-- BELOW IS FOR CHECKING INSERTS/UPDATES WITH MEETINGS THE PROF CURRENTLY TEACHES
+
+CREATE OR REPLACE FUNCTION weekly_with_current_prof_weekly_or_review() RETURNS TRIGGER AS $$
+DECLARE
+    conflicting_weekly_meeting BOOLEAN;
+    conflicting_review_meeting BOOLEAN;
+    common_date DATE := '2000-01-01'; -- just for OVERLAPS comparison with TIME, otherwise it doesn't work I think
+BEGIN
+    -- Check for conflicts between weekly meetings
+    SELECT EXISTS (
+        -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
+        WITH professor_name AS (
+            SELECT faculty_name FROM teaches t
+            WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
+        ),
+
+        /* 
+        Step 1: Identify All Weekly Meetings Of Classes The Teacher is Currently Teaching
+        */
+        CurrentTeachingMeetings AS (
+            SELECT * FROM teaches t
+            JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
+            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
+            AND wm1.section_id != NEW.section_id AND wm1.course_number != NEW.course_number AND wm1.meeting_type != NEW.meeting_type AND wm1.day_of_week != NEW.day_of_week
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT ctm.*
+        FROM CurrentTeachingMeetings ctm 
+        WHERE ctm.day_of_week = NEW.day_of_week AND (common_date + ctm.start_time, common_date + ctm.end_time) OVERLAPS (common_date + NEW.start_time, common_date + NEW.end_time)
+    ) INTO conflicting_weekly_meeting;
+
+    -- Check for conflicts between review meetings
+    SELECT EXISTS (
+        -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
+        WITH professor_name AS (
+            SELECT faculty_name FROM teaches t
+            WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
+        ),
+
+        /* 
+        Step 1: Identify All Review Meetings Of Classes The Teacher is Currently Teaching
+        */
+        CurrentReviewMeetings AS (
+            SELECT * FROM teaches t
+            JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
+            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT crm.*
+        FROM CurrentReviewMeetings crm 
+        WHERE NEW.day_of_week = TO_CHAR(crm.start_time, 'Dy')::day_enum AND (NEW.start_time, NEW.end_time) OVERLAPS (TO_CHAR(crm.start_time, 'HH24:MI:SS')::TIME, TO_CHAR(crm.end_time, 'HH24:MI:SS')::TIME)
+    ) INTO conflicting_review_meeting;
+
+
+    IF conflicting_weekly_meeting THEN
+        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with this weekly meeting.', NEW.faculty_name;
+    END IF;
+
+    IF conflicting_review_meeting THEN
+        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with this review meeting.', NEW.faculty_name;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_check_weekly_with_current_prof_weekly_or_review_conflict
+BEFORE INSERT OR UPDATE ON weekly_meeting
+FOR EACH ROW
+EXECUTE FUNCTION weekly_with_current_prof_weekly_or_review();
+
+
+
+
+
+CREATE OR REPLACE FUNCTION review_with_current_prof_weekly_or_review() RETURNS TRIGGER AS $$
+DECLARE
+    conflicting_weekly_meeting BOOLEAN;
+    conflicting_review_meeting BOOLEAN;
+    common_date DATE := '2000-01-01'; -- just for OVERLAPS comparison with TIME, otherwise it doesn't work I think
+BEGIN
+    -- Check for conflicts between weekly meetings
+    SELECT EXISTS (
+        -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
+        WITH professor_name AS (
+            SELECT faculty_name FROM teaches t
+            WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
+        ),
+
+        /* 
+        Step 1: Identify All Meetings Of Classes The Teacher is Currently Teaching
+        */
+        CurrentTeachingMeetings AS (
+            SELECT * FROM teaches t
+            JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
+            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT ctm.*
+        FROM CurrentTeachingMeetings ctm 
+        WHERE ctm.day_of_week = TO_CHAR(NEW.start_time, 'Dy')::day_enum AND (ctm.start_time, ctm.end_time) OVERLAPS (TO_CHAR(NEW.start_time, 'HH24:MI:SS')::TIME, TO_CHAR(NEW.end_time, 'HH24:MI:SS')::TIME)
+    ) INTO conflicting_weekly_meeting;
+
+    -- Check for conflicts between review meetings
+    SELECT EXISTS (
+        -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
+        WITH professor_name AS (
+            SELECT faculty_name FROM teaches t
+            WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
+        ),
+
+        /* 
+        Step 1: Identify All Review Meetings Of Classes The Teacher is Currently Teaching
+        */
+        CurrentReviewMeetings AS (
+            SELECT * FROM teaches t
+            JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
+            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
+            AND rm1.section_id != NEW.section_id AND rm1.course_number != NEW.course_number AND rm1.start_time != NEW.start_time
+        )
+
+        /*
+        Step 3: Find Overlapping Sections
+        Find sections that have overlapping meeting times with the profs current sections.
+        */
+        SELECT crm.*
+        FROM CurrentReviewMeetings crm
+        WHERE (crm.start_time, crm.end_time) OVERLAPS (NEW.start_time, NEW.end_time)
+    ) INTO conflicting_review_meeting;
+
+    IF conflicting_weekly_meeting THEN
+        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with this review meeting.', NEW.faculty_name;
+    END IF;
+
+    IF conflicting_review_meeting THEN
+        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with this review meeting.', NEW.faculty_name;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_check_review_with_current_prof_weekly_or_review_conflict
+BEFORE INSERT OR UPDATE ON review_meeting
+FOR EACH ROW
+EXECUTE FUNCTION review_with_current_prof_weekly_or_review();
