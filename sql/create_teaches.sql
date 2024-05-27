@@ -17,8 +17,8 @@ DECLARE
     common_date DATE := '2000-01-01'; -- just for OVERLAPS comparison with TIME, otherwise it doesn't work I think
 BEGIN
     SELECT EXISTS (
-        SELECT * FROM Teaches WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id AND t.course_number = NEW.section_id
-    ) INTO class_already_taught
+        SELECT * FROM Teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id
+    ) INTO class_already_taught;
 
     -- Check for conflicts between weekly meetings
     SELECT EXISTS (
@@ -131,6 +131,10 @@ BEGIN
         FROM CurrentTeachingMeetings ctm, WantsToTeachReviewMeetings wttrm 
         WHERE ctm.day_of_week = TO_CHAR(wttrm.start_time, 'Dy')::day_enum AND (ctm.start_time, ctm.end_time) OVERLAPS (TO_CHAR(wttrm.start_time, 'HH24:MI:SS')::TIME, TO_CHAR(wttrm.end_time, 'HH24:MI:SS')::TIME)
     ) INTO conflicting_weekly_and_review_meeting;
+
+    IF class_already_taught THEN
+        RAISE EXCEPTION 'This class is already being taught!';
+    END IF;
 
     IF conflicting_weekly_meeting THEN
         RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with the weekly meeting of the new class.', NEW.faculty_name;
