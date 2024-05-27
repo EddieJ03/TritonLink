@@ -13,6 +13,7 @@ DECLARE
     conflicting_weekly_meeting BOOLEAN;
     conflicting_review_meeting BOOLEAN;
     conflicting_weekly_and_review_meeting BOOLEAN;
+    common_date DATE := '2000-01-01';
 BEGIN
     -- Check for conflicts between weekly meetings
     SELECT EXISTS (
@@ -40,7 +41,7 @@ BEGIN
         */
         SELECT ctm.*, wttm.*
         FROM CurrentTeachingMeetings ctm, WantsToTeachMeetings wttm 
-        WHERE ctm.day_of_week = wttm.day_of_week AND (ctm.start_time, ctm.end_time) OVERLAPS (wttm.start_time, wttm.end_time)
+        WHERE ctm.day_of_week = wttm.day_of_week AND (common_date + ctm.start_time, common_date + ctm.end_time) OVERLAPS (common_date + wttm.start_time, common_date + wttm.end_time)
     ) INTO conflicting_weekly_meeting;
 
     -- Check for conflicts between review meetings
@@ -72,7 +73,6 @@ BEGIN
         WHERE (crm.start_time, crm.end_time) OVERLAPS (wttrm.start_time, wttrm.end_time)
     ) INTO conflicting_review_meeting;
 
-    
     SELECT EXISTS (
         /* 
         Step 1: Identify All Review Meetings Of Classes The Teacher is Currently Teaching
@@ -98,7 +98,7 @@ BEGIN
         */
         SELECT crm.*, wttm.*
         FROM CurrentReviewMeetings crm, WantsToTeachMeetings wttm 
-        WHERE wttm.day_of_week = TO_CHAR(crm.start_time, 'Dy')::day_enum AND (wttm.start_time, wttm.end_time) OVERLAPS (TO_CHAR(crm.start_time, 'HH24:MI:SS'), TO_CHAR(crm.end_time, 'HH24:MI:SS'))
+        WHERE wttm.day_of_week = TO_CHAR(crm.start_time, 'Dy')::day_enum AND (wttm.start_time, wttm.end_time) OVERLAPS (TO_CHAR(crm.start_time, 'HH24:MI:SS')::TIME, TO_CHAR(crm.end_time, 'HH24:MI:SS')::TIME)
     ) OR EXISTS (
         /* 
         Step 1: Identify All Weekly Meetings Of Classes The Teacher is Currently Teaching
@@ -124,7 +124,7 @@ BEGIN
         */
         SELECT ctm.*, wttrm.*
         FROM CurrentTeachingMeetings ctm, WantsToTeachReviewMeetings wttrm 
-        WHERE ctm.day_of_week = TO_CHAR(wttrm.start_time, 'Dy')::day_enum AND (ctm.start_time, ctm.end_time) OVERLAPS (TO_CHAR(wttrm.start_time, 'HH24:MI:SS'), TO_CHAR(wttrm.end_time, 'HH24:MI:SS'))
+        WHERE ctm.day_of_week = TO_CHAR(wttrm.start_time, 'Dy')::day_enum AND (ctm.start_time, ctm.end_time) OVERLAPS (TO_CHAR(wttrm.start_time, 'HH24:MI:SS')::TIME, TO_CHAR(wttrm.end_time, 'HH24:MI:SS')::TIME)
     ) INTO conflicting_weekly_and_review_meeting;
 
     IF conflicting_weekly_meeting THEN
