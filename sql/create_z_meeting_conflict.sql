@@ -101,14 +101,19 @@ EXECUTE FUNCTION check_new_review_meeting_conflict();
 
 CREATE OR REPLACE FUNCTION weekly_with_current_prof_weekly_or_review() RETURNS TRIGGER AS $$
 DECLARE
+    professor_name VARCHAR(100);
     conflicting_weekly_meeting BOOLEAN;
     conflicting_review_meeting BOOLEAN;
     common_date DATE := '2000-01-01'; -- just for OVERLAPS comparison with TIME, otherwise it doesn't work I think
 BEGIN
+    SELECT faculty_name FROM teaches t
+    WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
+    INTO professor_name;
+
     -- Check for conflicts between weekly meetings
     SELECT EXISTS (
         -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
-        WITH professor_name AS (
+        WITH prof_name AS (
             SELECT faculty_name FROM teaches t
             WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
         ),
@@ -119,8 +124,8 @@ BEGIN
         CurrentTeachingMeetings AS (
             SELECT * FROM teaches t
             JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
-            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
-            AND wm1.section_id != NEW.section_id AND wm1.course_number != NEW.course_number AND wm1.meeting_type != NEW.meeting_type AND wm1.day_of_week != NEW.day_of_week
+            WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
+            AND wm1.section_id != NEW.section_id AND wm1.course_number != NEW.course_number
         )
 
         /*
@@ -135,7 +140,7 @@ BEGIN
     -- Check for conflicts between review meetings
     SELECT EXISTS (
         -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
-        WITH professor_name AS (
+        WITH prof_name AS (
             SELECT faculty_name FROM teaches t
             WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
         ),
@@ -146,7 +151,7 @@ BEGIN
         CurrentReviewMeetings AS (
             SELECT * FROM teaches t
             JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
-            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
+            WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
         )
 
         /*
@@ -160,11 +165,11 @@ BEGIN
 
 
     IF conflicting_weekly_meeting THEN
-        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with this weekly meeting.', NEW.faculty_name;
+        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with this weekly meeting.', professor_name;
     END IF;
 
     IF conflicting_review_meeting THEN
-        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with this review meeting.', NEW.faculty_name;
+        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with this review meeting.', professor_name;
     END IF;
 
     RETURN NEW;
@@ -182,14 +187,19 @@ EXECUTE FUNCTION weekly_with_current_prof_weekly_or_review();
 
 CREATE OR REPLACE FUNCTION review_with_current_prof_weekly_or_review() RETURNS TRIGGER AS $$
 DECLARE
+    professor_name VARCHAR(100);
     conflicting_weekly_meeting BOOLEAN;
     conflicting_review_meeting BOOLEAN;
     common_date DATE := '2000-01-01'; -- just for OVERLAPS comparison with TIME, otherwise it doesn't work I think
 BEGIN
+    SELECT faculty_name FROM teaches t
+    WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
+    INTO professor_name;
+
     -- Check for conflicts between weekly meetings
     SELECT EXISTS (
         -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
-        WITH professor_name AS (
+        WITH prof_name AS (
             SELECT faculty_name FROM teaches t
             WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
         ),
@@ -200,7 +210,7 @@ BEGIN
         CurrentTeachingMeetings AS (
             SELECT * FROM teaches t
             JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
-            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
+            WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
         )
 
         /*
@@ -215,7 +225,7 @@ BEGIN
     -- Check for conflicts between review meetings
     SELECT EXISTS (
         -- ASSUME CLASS CAN ONLY BE TAUGHT BY ONE PROF
-        WITH professor_name AS (
+        WITH prof_name AS (
             SELECT faculty_name FROM teaches t
             WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number
         ),
@@ -226,8 +236,8 @@ BEGIN
         CurrentReviewMeetings AS (
             SELECT * FROM teaches t
             JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
-            WHERE t.faculty_name = (SELECT faculty_name FROM professor_name) 
-            AND rm1.section_id != NEW.section_id AND rm1.course_number != NEW.course_number AND rm1.start_time != NEW.start_time
+            WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
+            AND rm1.section_id != NEW.section_id AND rm1.course_number != NEW.course_number
         )
 
         /*
@@ -240,11 +250,11 @@ BEGIN
     ) INTO conflicting_review_meeting;
 
     IF conflicting_weekly_meeting THEN
-        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with this review meeting.', NEW.faculty_name;
+        RAISE EXCEPTION 'Professor % currently has a weekly meeting that conflicts with this review meeting.', professor_name;
     END IF;
 
     IF conflicting_review_meeting THEN
-        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with this review meeting.', NEW.faculty_name;
+        RAISE EXCEPTION 'Professor % currently has a review meeting that conflicts with this review meeting.', professor_name;
     END IF;
 
     RETURN NEW;
