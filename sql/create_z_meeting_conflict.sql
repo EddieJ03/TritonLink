@@ -122,10 +122,9 @@ BEGIN
         Step 1: Identify All Weekly Meetings Of Classes The Teacher is Currently Teaching
         */
         CurrentTeachingMeetings AS (
-            SELECT * FROM teaches t
+            SELECT t.section_id as section_id, wm1.start_time as start_time, wm1.end_time as end_time, t.course_number as course_number, wm1.day_of_week as day_of_week, wm1.meeting_type as meeting_type FROM teaches t
             JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
             WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
-            AND wm1.section_id != NEW.section_id AND wm1.course_number != NEW.course_number
         )
 
         /*
@@ -135,6 +134,7 @@ BEGIN
         SELECT ctm.*
         FROM CurrentTeachingMeetings ctm 
         WHERE ctm.day_of_week = NEW.day_of_week AND (common_date + ctm.start_time, common_date + ctm.end_time) OVERLAPS (common_date + NEW.start_time, common_date + NEW.end_time)
+        AND NOT (ctm.section_id = NEW.section_id AND ctm.course_number = NEW.course_number AND ctm.meeting_type = NEW.meeting_type AND ctm.day_of_week = NEW.day_of_week)
     ) INTO conflicting_weekly_meeting;
 
     -- Check for conflicts between review meetings
@@ -234,10 +234,9 @@ BEGIN
         Step 1: Identify All Review Meetings Of Classes The Teacher is Currently Teaching
         */
         CurrentReviewMeetings AS (
-            SELECT * FROM teaches t
+            SELECT t.section_id as section_id, rm1.start_time as start_time, rm1.end_time as end_time, t.course_number as course_number FROM teaches t
             JOIN review_meeting rm1 ON t.section_id = rm1.section_id AND t.course_number = rm1.course_number
             WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
-            AND rm1.section_id != NEW.section_id AND rm1.course_number != NEW.course_number
         )
 
         /*
@@ -247,6 +246,7 @@ BEGIN
         SELECT crm.*
         FROM CurrentReviewMeetings crm
         WHERE (crm.start_time, crm.end_time) OVERLAPS (NEW.start_time, NEW.end_time)
+        AND NOT (crm.section_id = NEW.section_id AND crm.course_number = NEW.course_number AND crm.start_time = NEW.start_time)
     ) INTO conflicting_review_meeting;
 
     IF conflicting_weekly_meeting THEN
