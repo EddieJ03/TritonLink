@@ -1,0 +1,116 @@
+CREATE TABLE CPG (
+    faculty_name VARCHAR,
+    course_number VARCHAR,
+    A INTEGER DEFAULT 0,
+    B INTEGER DEFAULT 0,
+    C INTEGER DEFAULT 0,
+    D INTEGER DEFAULT 0,
+    other INTEGER DEFAULT 0
+);
+
+INSERT INTO CPG (faculty_name, course_number, A, B, C, D, other)
+SELECT 
+    f.name AS faculty_name, 
+    te.course_number AS course_number, 
+    SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,
+    SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
+    SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
+    SUM(CASE WHEN e.grade = 'D' THEN 1 ELSE 0 END) AS D,
+    SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S', 'U') THEN 1 ELSE 0 END) AS other
+FROM 
+    faculty f 
+    JOIN teaches te ON f.name = te.faculty_name
+    JOIN classes cl ON te.section_id = cl.section_id
+    JOIN enrolled e ON te.section_id = e.section_id
+GROUP BY 
+    f.name, te.course_number;
+
+-- CREATE TABLE CPG AS (
+--     SELECT f.name as faculty_name, te.course_number as course_number, 
+--         SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,
+--         SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
+--         SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
+--         SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D,
+--         SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other
+--     FROM faculty f 
+--         JOIN teaches te ON f.name = te.faculty_name
+--         JOIN classes cl ON te.section_id = cl.section_id
+--         JOIN enrolled e ON te.section_id = e.section_id
+--     GROUP BY f.name, te.course_number
+-- );
+
+CREATE OR REPLACE FUNCTION cpg_update()
+    RETURNS trigger 
+    LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF EXISTS (SELECT FROM CPG c JOIN teaches t ON t.course_number = c.course_number WHERE NEW.course_number = t.course_number AND NEW.section_id = t.section_id AND t.faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id)) THEN
+        UPDATE CPG SET 
+        A = (
+            CASE WHEN NEW.grade IN ('A+', 'A', 'A-') THEN A + 1 ELSE A END
+        ),
+        B = (
+            CASE WHEN NEW.grade IN ('B+', 'B', 'B-') THEN B + 1 ELSE B END
+        ),
+        C = (
+            CASE WHEN NEW.grade IN ('C+', 'C', 'C-') THEN C + 1 ELSE C END
+        ),
+        D = (
+            CASE WHEN NEW.grade IN ('D') THEN D + 1 ELSE D END
+        ),
+        other = (
+            CASE WHEN NEW.grade IN ('F', 'Incomplete', 'S','U') THEN other + 1 ELSE other END
+        )
+        WHERE course_number = NEW.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id);
+
+        -- SUBTRACT FROM OLD
+        UPDATE CPG SET 
+        A = (
+            CASE WHEN OLD.grade IN ('A+', 'A', 'A-') THEN A - 1 ELSE A END
+        ),
+        B = (
+            CASE WHEN OLD.grade IN ('B+', 'B', 'B-') THEN B - 1 ELSE B END
+        ),
+        C = (
+            CASE WHEN OLD.grade IN ('C+', 'C', 'C-') THEN C - 1 ELSE C END
+        ),
+        D = (
+            CASE WHEN OLD.grade IN ('D') THEN D - 1 ELSE D END
+        ),
+        other = (
+            CASE WHEN OLD.grade IN ('F', 'Incomplete', 'S','U') THEN other - 1 ELSE other END
+        )
+        WHERE course_number = OLD.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = OLD.course_number AND t.section_id = OLD.section_id);
+
+        RETURN NEW;
+    ELSE
+        INSERT INTO CPG VALUES(NEW.course_number, NEW.faculty_name, 0, 0, 0, 0, 0);
+
+        UPDATE CPG SET 
+        A = (
+            CASE WHEN NEW.grade IN ('A+', 'A', 'A-') THEN A + 1 ELSE A END
+        ),
+        B = (
+            CASE WHEN NEW.grade IN ('B+', 'B', 'B-') THEN B + 1 ELSE B END
+        ),
+        C = (
+            CASE WHEN NEW.grade IN ('C+', 'C', 'C-') THEN C + 1 ELSE C END
+        ),
+        D = (
+            CASE WHEN NEW.grade IN ('D') THEN D + 1 ELSE D END
+        ),
+        other = (
+            CASE WHEN NEW.grade IN ('F', 'Incomplete', 'S','U') THEN other + 1 ELSE other END
+        )
+        WHERE course_number = NEW.course_number AND faculty_name = NEW.faculty_name;
+
+        RETURN NEW;
+    END IF;
+END;
+$$;
+
+CREATE or replace TRIGGER CPG_view_maintenance
+AFTER INSERT OR UPDATE on enrolled
+FOR EACH ROW
+EXECUTE procedure cpg_update();
+
