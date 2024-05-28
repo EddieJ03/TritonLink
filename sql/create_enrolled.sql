@@ -26,9 +26,9 @@ BEGIN
         RAISE EXCEPTION 'Enrollment limit reached for class % %', NEW.section_id, NEW.course_number;
     END IF;
 
-    IF NOT EXISTS (
+    IF NOT EXISTS(
         SELECT * FROM teaches t WHERE t.section_id = NEW.section_id AND t.course_number = NEW.course_number 
-    )
+    ) THEN
         RAISE EXCEPTION ' NO ONE IS TEACHING THIS CLASS % %', NEW.section_id, NEW.course_number;
     END IF;
 
