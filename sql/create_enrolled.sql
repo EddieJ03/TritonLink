@@ -32,6 +32,12 @@ BEGIN
         RAISE EXCEPTION ' NO ONE IS TEACHING THIS CLASS % %', NEW.section_id, NEW.course_number;
     END IF;
 
+    IF EXISTS(
+        SELECT * FROM enrolled e WHERE e.PID = new.PID AND e.course_number = NEW.course_number
+    ) THEN
+        RAISE EXCEPTION 'STUDENT HAS ALREADY ENROLLED IN COURSE %', NEW.course_number;
+    END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
