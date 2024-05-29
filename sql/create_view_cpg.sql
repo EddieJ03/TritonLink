@@ -19,7 +19,7 @@ SELECT
     SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
     SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
     SUM(CASE WHEN e.grade = 'D' THEN 1 ELSE 0 END) AS D,
-    SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S', 'U') THEN 1 ELSE 0 END) AS other
+    SUM(CASE WHEN e.grade IN ('F','S', 'U') THEN 1 ELSE 0 END) AS other
 FROM 
     faculty f 
     JOIN teaches te ON f.name = te.faculty_name
@@ -62,7 +62,7 @@ BEGIN
             CASE WHEN NEW.grade IN ('D') THEN D + 1 ELSE D END
         ),
         other = (
-            CASE WHEN NEW.grade IN ('F', 'Incomplete', 'S','U') THEN other + 1 ELSE other END
+            CASE WHEN NEW.grade IN ('F','S','U') THEN other + 1 ELSE other END
         )
         WHERE course_number = NEW.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id);
 
@@ -81,7 +81,7 @@ BEGIN
             CASE WHEN OLD.grade IN ('D') THEN D - 1 ELSE D END
         ),
         other = (
-            CASE WHEN OLD.grade IN ('F', 'Incomplete', 'S','U') THEN other - 1 ELSE other END
+            CASE WHEN OLD.grade IN ('F','S','U') THEN other - 1 ELSE other END
         )
         WHERE course_number = OLD.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = OLD.course_number AND t.section_id = OLD.section_id);
 
@@ -103,7 +103,7 @@ BEGIN
             CASE WHEN NEW.grade IN ('D') THEN D + 1 ELSE D END
         ),
         other = (
-            CASE WHEN NEW.grade IN ('F', 'Incomplete', 'S','U') THEN other + 1 ELSE other END
+            CASE WHEN NEW.grade IN ('F','S','U') THEN other + 1 ELSE other END
         )
         WHERE course_number = NEW.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id);
 

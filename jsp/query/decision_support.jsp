@@ -33,7 +33,7 @@
                             if (action != null && action.equals("course")) {
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                statement = conn.prepareStatement(("SELECT cl.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A, SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other FROM classes cl JOIN enrolled e ON cl.section_id = e.section_id WHERE cl.course_number = ? GROUP BY cl.course_number;"));
+                                statement = conn.prepareStatement(("SELECT cl.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A, SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F','S','U') THEN 1 ELSE 0 END) AS other FROM classes cl JOIN enrolled e ON cl.section_id = e.section_id WHERE cl.course_number = ? GROUP BY cl.course_number;"));
 
 
                                 statement.setString(1, request.getParameter("course_number"));
@@ -44,7 +44,7 @@
                             if (action != null && action.equals("course and professor")) {
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                statement = conn.prepareStatement(("SELECT f.name, te.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other, AVG(g.NUMBER_GRADE) as gpa FROM faculty f JOIN teaches te ON f.name = te.faculty_name JOIN classes cl ON te.section_id = cl.section_id JOIN enrolled e ON te.section_id = e.section_id LEFT JOIN grade_conversion g ON CAST(e.grade AS CHAR(2)) = g.LETTER_GRADE WHERE f.name = ? AND cl.course_number = ? GROUP BY f.name, te.course_number;"));
+                                statement = conn.prepareStatement(("SELECT f.name, te.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F','S','U') THEN 1 ELSE 0 END) AS other, AVG(g.NUMBER_GRADE) as gpa FROM faculty f JOIN teaches te ON f.name = te.faculty_name JOIN classes cl ON te.section_id = cl.section_id JOIN enrolled e ON te.section_id = e.section_id LEFT JOIN grade_conversion g ON CAST(e.grade AS CHAR(2)) = g.LETTER_GRADE WHERE f.name = ? AND cl.course_number = ? GROUP BY f.name, te.course_number;"));
 
                                 statement.setString(1, request.getParameter("professor"));
                                 statement.setString(2, request.getParameter("course_number"));
@@ -55,7 +55,7 @@
                             if (action != null && action.equals("cpq")) {
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                statement = conn.prepareStatement(("SELECT f.name, te.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A, SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other FROM faculty f JOIN teaches te ON f.name = te.faculty_name JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = ?::quarter_enum AND cl.year = ? JOIN enrolled e ON te.section_id = e.section_id WHERE f.name = ? AND te.course_number = ? GROUP BY f.name, te.course_number;"));
+                                statement = conn.prepareStatement(("SELECT f.name, te.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A, SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F','S','U') THEN 1 ELSE 0 END) AS other FROM faculty f JOIN teaches te ON f.name = te.faculty_name JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = ?::quarter_enum AND cl.year = ? JOIN enrolled e ON te.section_id = e.section_id WHERE f.name = ? AND te.course_number = ? GROUP BY f.name, te.course_number;"));
 
                                 statement.setString(1, request.getParameter("quarter"));
                                 statement.setInt(2, Integer.parseInt(request.getParameter("year")));
