@@ -53,12 +53,10 @@ AS $$
 BEGIN
     IF EXISTS (
         SELECT FROM CPQG c 
-            JOIN teaches t ON t.course_number = c.course_number
-            JOIN classes cl ON c.course_number = cl.course_number AND c.quarter = cl.quarter AND c.year = cl.year 
-        WHERE NEW.course_number = t.course_number 
-            AND t.faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id) 
-            AND cl.quarter = (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
-            AND cl.year = (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+        WHERE NEW.course_number = c.course_number 
+            AND c.faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id) 
+            AND c.quarter = (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+            AND c.year = (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
         ) THEN
         UPDATE CPQG SET 
         A = (

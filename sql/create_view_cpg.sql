@@ -28,26 +28,12 @@ FROM
 GROUP BY 
     f.name, te.course_number;
 
--- CREATE TABLE CPG AS (
---     SELECT f.name as faculty_name, te.course_number as course_number, 
---         SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A,
---         SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B,
---         SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C,
---         SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D,
---         SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other
---     FROM faculty f 
---         JOIN teaches te ON f.name = te.faculty_name
---         JOIN classes cl ON te.section_id = cl.section_id
---         JOIN enrolled e ON te.section_id = e.section_id
---     GROUP BY f.name, te.course_number
--- );
-
 CREATE OR REPLACE FUNCTION cpg_update()
     RETURNS trigger 
     LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF EXISTS (SELECT FROM CPG c JOIN teaches t ON t.course_number = c.course_number WHERE NEW.course_number = t.course_number AND t.faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id)) THEN
+    IF EXISTS (SELECT FROM CPG c WHERE NEW.course_number = c.course_number AND c.faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id)) THEN
         UPDATE CPG SET 
         A = (
             CASE WHEN NEW.grade IN ('A+', 'A', 'A-') THEN A + 1 ELSE A END
