@@ -20,6 +20,23 @@
                         ResultSet courseProfQuarterDistRS = null;
                         PreparedStatement statement = null;
 
+                        Statement courseNumberStatement = null;
+                        ResultSet courseNumberRS = null;
+
+                        
+                        Statement courseNumberStatement2 = null;
+                        ResultSet courseNumberRS2 = null;
+
+                        
+                        Statement courseNumberStatement3 = null;
+                        ResultSet courseNumberRS3 = null;
+
+                        Statement professorStatement = null;
+                        ResultSet professorRS = null;
+
+                        Statement professorStatement2 = null;
+                        ResultSet professorRS2 = null;
+
                         // Make a connection to the PostgreSQL datasource
                         try {
                             conn = DriverManager.getConnection(
@@ -64,6 +81,22 @@
                                 
                                 courseProfQuarterDistRS = statement.executeQuery();
                             }
+                        
+                        courseNumberStatement = conn.createStatement();
+                        courseNumberRS = courseNumberStatement.executeQuery("SELECT DISTINCT course_number FROM course;");
+                        
+                        courseNumberStatement2 = conn.createStatement();
+                        courseNumberRS2 = courseNumberStatement2.executeQuery("SELECT DISTINCT course_number FROM course;");
+                        
+                        courseNumberStatement3 = conn.createStatement();
+                        courseNumberRS3 = courseNumberStatement3.executeQuery("SELECT DISTINCT course_number FROM course;");
+
+                        
+                        professorStatement = conn.createStatement();
+                        professorRS = professorStatement.executeQuery("SELECT name AS professor FROM faculty;");
+
+                        professorStatement2 = conn.createStatement();
+                        professorRS2 = professorStatement2.executeQuery("SELECT name AS professor FROM faculty;");
                     %>
                     <table>
                         <tr>
@@ -84,8 +117,32 @@
                                     </select>
                                 </th>
                                 <th><input type="number"  value="<%= request.getParameter("year") == null ? 2024 : request.getParameter("year") %>" name="year" size="15" required></th>
-                                <th><input value="<%= (request.getParameter("professor") == null || request.getParameter("action") == null || !request.getParameter("action").equals("cpq")) ? "" : request.getParameter("professor") %>" name="professor" size="15" required></th>
-                                <th><input value="<%= (request.getParameter("course_number") == null || request.getParameter("action") == null || !request.getParameter("action").equals("cpq")) ? "" : request.getParameter("course_number") %>" name="course_number" size="15" required></th>
+                                <th>
+                                    <select name="professor" id="professor">
+                                        <%
+                                            while (professorRS != null && professorRS.next()) {
+                                        %>
+                                            <option value="<%= String.format("%s", professorRS.getString("professor")) %>"
+                                                <%= professorRS.getString("professor").equals(request.getParameter("professor")) && "cpq".equals(request.getParameter("action")) ? "selected" : "" %>>
+                                                <%= professorRS.getString("professor") %>
+                                            </option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </th>
+
+                                <th>
+                                    <select name="course_number" id="course_number">
+                                        <%
+                                            while(courseNumberRS != null && courseNumberRS.next()) {
+                                        %>
+                                                <option value="<%= String.format("%s", courseNumberRS.getString("course_number")) %>" <%=courseNumberRS.getString("course_number").equals(request.getParameter("course_number")) && request.getParameter("action").equals("cpq") ? "selected" : "" %>><%= courseNumberRS.getString("course_number") %></option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
@@ -125,8 +182,31 @@
                         <tr>
                             <form action="decision_support.jsp" method="get">
                                 <input type="hidden" value="course and professor" name="action">
-                                <th><input value="<%= (request.getParameter("professor") == null || request.getParameter("action") == null || !request.getParameter("action").equals("course and professor")) ? "" : request.getParameter("professor") %>" name="professor" size="15" required></th>
-                                <th><input value="<%= (request.getParameter("course_number") == null || request.getParameter("action") == null || !request.getParameter("action").equals("course and professor")) ? "" : request.getParameter("course_number") %>" name="course_number" size="15" required></th>
+                                <th>
+                                    <select name="professor" id="professor">
+                                        <%
+                                            while (professorRS2 != null && professorRS2.next()) {
+                                        %>
+                                            <option value="<%= String.format("%s", professorRS2.getString("professor")) %>"
+                                                <%= professorRS2.getString("professor").equals(request.getParameter("professor")) && "course and professor".equals(request.getParameter("action")) ? "selected" : "" %>>
+                                                <%= professorRS2.getString("professor") %>
+                                            </option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </th>
+                                <th>
+                                    <select name="course_number" id="course_number">
+                                        <%
+                                            while(courseNumberRS2 != null && courseNumberRS2.next()) {
+                                        %>
+                                                <option value="<%= String.format("%s", courseNumberRS2.getString("course_number")) %>" <%=courseNumberRS2.getString("course_number").equals(request.getParameter("course_number")) && request.getParameter("action").equals("course and professor") ? "selected" : "" %>><%= courseNumberRS2.getString("course_number") %></option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
@@ -167,7 +247,17 @@
                         <tr>
                             <form action="decision_support.jsp" method="get">
                                 <input type="hidden" value="course" name="action">
-                                <th><input value="<%= (request.getParameter("course_number") == null || request.getParameter("action") == null || !request.getParameter("action").equals("course")) ? "" : request.getParameter("course_number") %>" name="course_number" size="15" required></th>
+                                <th>
+                                    <select name="course_number" id="course_number">
+                                        <%
+                                            while(courseNumberRS3 != null && courseNumberRS3.next()) {
+                                        %>
+                                                <option value="<%= String.format("%s", courseNumberRS3.getString("course_number")) %>" <%=courseNumberRS3.getString("course_number").equals(request.getParameter("course_number")) && request.getParameter("action").equals("course") ? "selected" : "" %>><%= courseNumberRS3.getString("course_number") %></option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
@@ -206,6 +296,39 @@
                             // Close the Statement
                             if(statement != null)
                                 statement.close();
+
+                            if (courseNumberRS != null) {
+                                courseNumberRS.close();
+                            }
+                            if (courseNumberStatement != null) {
+                                courseNumberStatement.close();
+                            }
+                            if (courseNumberRS2 != null) {
+                                courseNumberRS2.close();
+                            }
+                            if (courseNumberStatement2 != null) {
+                                courseNumberStatement2.close();
+                            }
+                            if (courseNumberRS3 != null) {
+                                courseNumberRS3.close();
+                            }
+                            if (courseNumberStatement3 != null) {
+                                courseNumberStatement3.close();
+                            }
+
+                            if (professorRS != null) {
+                                professorRS.close();
+                            }
+                            if (professorStatement != null) {
+                                professorStatement.close();
+                            }
+                            if (professorRS2 != null) {
+                                professorRS2.close();
+                            }
+                            if (professorStatement2 != null) {
+                                professorStatement2.close();
+                            }
+
                             // Close the Connection
                             conn.close();
                         } catch (SQLException sqle) {
@@ -220,6 +343,38 @@
                             if(statement != null)
                                 statement.close();
                             // Close the Connection
+
+                            if (courseNumberRS != null) {
+                                courseNumberRS.close();
+                            }
+                            if (courseNumberStatement != null) {
+                                courseNumberStatement.close();
+                            }
+                            if (courseNumberRS2 != null) {
+                                courseNumberRS2.close();
+                            }
+                            if (courseNumberStatement2 != null) {
+                                courseNumberStatement2.close();
+                            }
+                            if (courseNumberRS3 != null) {
+                                courseNumberRS3.close();
+                            }
+                            if (courseNumberStatement3 != null) {
+                                courseNumberStatement3.close();
+                            }
+
+                            if (professorRS != null) {
+                                professorRS.close();
+                            }
+                            if (professorStatement != null) {
+                                professorStatement.close();
+                            }
+                            if (professorRS2 != null) {
+                                professorRS2.close();
+                            }
+                            if (professorStatement2 != null) {
+                                professorStatement2.close();
+                            }
 
                             if(conn != null)
                                 conn.close();
@@ -240,6 +395,39 @@
                             
                             if(conn != null)
                                 conn.close();
+
+                            if (courseNumberRS != null) {
+                                courseNumberRS.close();
+                            }
+                            if (courseNumberStatement != null) {
+                                courseNumberStatement.close();
+                            }
+                            if (courseNumberRS2 != null) {
+                                courseNumberRS2.close();
+                            }
+                            if (courseNumberStatement2 != null) {
+                                courseNumberStatement2.close();
+                            }
+                            if (courseNumberRS3 != null) {
+                                courseNumberRS3.close();
+                            }
+                            if (courseNumberStatement3 != null) {
+                                courseNumberStatement3.close();
+                            }
+
+                            if (professorRS != null) {
+                                professorRS.close();
+                            }
+                            if (professorStatement != null) {
+                                professorStatement.close();
+                            }
+                            if (professorRS2 != null) {
+                                professorRS2.close();
+                            }
+                            if (professorStatement2 != null) {
+                                professorStatement2.close();
+                            }
+
                             
                             out.println(e.getMessage());
                         }
