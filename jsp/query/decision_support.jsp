@@ -55,16 +55,13 @@
                             if (action != null && action.equals("cpq")) {
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                statement = conn.prepareStatement(("SELECT f.name, te.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A, SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other FROM faculty f JOIN teaches te ON f.name = te.faculty_name JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = ?::quarter_enum AND cl.year = ? JOIN enrolled e ON te.section_id = e.section_id WHERE f.name = ? GROUP BY f.name, te.course_number;"));
+                                statement = conn.prepareStatement(("SELECT f.name, te.course_number, SUM(CASE WHEN e.grade IN ('A+', 'A', 'A-') THEN 1 ELSE 0 END) AS A, SUM(CASE WHEN e.grade IN ('B+', 'B', 'B-') THEN 1 ELSE 0 END) AS B, SUM(CASE WHEN e.grade IN ('C+', 'C', 'C-') THEN 1 ELSE 0 END) AS C, SUM(CASE WHEN e.grade IN ('D') THEN 1 ELSE 0 END) AS D, SUM(CASE WHEN e.grade IN ('F', 'Incomplete', 'S','U') THEN 1 ELSE 0 END) AS other FROM faculty f JOIN teaches te ON f.name = te.faculty_name JOIN classes cl ON te.section_id = cl.section_id AND cl.quarter = ?::quarter_enum AND cl.year = ? JOIN enrolled e ON te.section_id = e.section_id WHERE f.name = ? AND te.course_number = ? GROUP BY f.name, te.course_number;"));
 
                                 statement.setString(1, request.getParameter("quarter"));
                                 statement.setInt(2, Integer.parseInt(request.getParameter("year")));
                                 statement.setString(3, request.getParameter("professor"));
+                                statement.setString(4, request.getParameter("course_number"));
                                 
-                                System.out.println(request.getParameter("professor"));
-                                System.out.println(request.getParameter("year"));
-
-                                System.out.println(request.getParameter("quarter"));
                                 courseProfQuarterDistRS = statement.executeQuery();
                             }
                     %>
@@ -73,6 +70,7 @@
                             <th>Quarter</th>
                             <th>Year</th>
                             <th>Professor</th>
+                            <th>Course Number</th>
                         </tr>
                         <tr>
                             <form id="cpq" action="decision_support.jsp" method="get">
@@ -87,6 +85,7 @@
                                 </th>
                                 <th><input type="number"  value="<%= request.getParameter("year") == null ? 2024 : request.getParameter("year") %>" name="year" size="15" required></th>
                                 <th><input value="<%= (request.getParameter("professor") == null || request.getParameter("action") == null || !request.getParameter("action").equals("cpq")) ? "" : request.getParameter("professor") %>" name="professor" size="15" required></th>
+                                <th><input value="<%= (request.getParameter("course_number") == null || request.getParameter("action") == null || !request.getParameter("action").equals("cpq")) ? "" : request.getParameter("course_number") %>" name="course_number" size="15" required></th>
                                 <th><input type="submit" value="Find"></th>
                             </form>
                         </tr>
