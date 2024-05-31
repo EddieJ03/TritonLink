@@ -72,7 +72,7 @@
                         <tr>
                             <form action="teaches.jsp" method="get">
                                 <input type="hidden" value="insert" name="action">
-                                <th><input value="" name="faculty_name" size="10" maxlength="10" required></th>
+                                <th><input value="" name="faculty_name" size="10" maxlength="50" required></th>
                                 <th><input value="" name="section_id" size="15" maxlength="50" required></th>
                                 <th><input value="" name="course_number" size="15" maxlength="50" required></th>
                                 <th><input type="submit" value="Insert"></th>
