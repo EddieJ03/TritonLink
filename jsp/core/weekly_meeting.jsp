@@ -59,18 +59,19 @@
                                 conn.setAutoCommit(false);
                                 // Create the prepared statement and use it to
                                 // INSERT the student attrs INTO the Student table.
-                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE weekly_meeting SET end_time = ?::time, end_date = ?, location = ?, start_time=?::time WHERE section_id = ? AND meeting_type = ?::meeting_enum AND course_number = ? AND day_of_week = ?::day_enum"));
+                                PreparedStatement pstmt = conn.prepareStatement(("UPDATE weekly_meeting SET end_time = ?::time, end_date = ?, location = ?, start_time=?::time, start_date = ? WHERE section_id = ? AND meeting_type = ?::meeting_enum AND course_number = ? AND day_of_week = ?::day_enum"));
 
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                                 
-                                pstmt.setString(5, request.getParameter("section_id"));
-                                pstmt.setString(6, request.getParameter("meeting_type"));
-                                pstmt.setString(7, request.getParameter("course_number"));
-                                pstmt.setString(8, request.getParameter("day_of_week"));
+                                pstmt.setString(6, request.getParameter("section_id"));
+                                pstmt.setString(7, request.getParameter("meeting_type"));
+                                pstmt.setString(8, request.getParameter("course_number"));
+                                pstmt.setString(9, request.getParameter("day_of_week"));
                                 pstmt.setString(1, request.getParameter("end_time"));
                                 pstmt.setDate(2, new java.sql.Date(dateFormat.parse(request.getParameter("end_date")).getTime()));
                                 pstmt.setString(3, request.getParameter("location"));
                                 pstmt.setString(4, request.getParameter("start_time"));
+                                pstmt.setDate(5, new java.sql.Date(dateFormat.parse(request.getParameter("start_date")).getTime()));
                                 
                                 pstmt.executeUpdate();
                                 conn.commit();
