@@ -30,6 +30,8 @@
                         ResultSet pidRS = null;
                         ResultSet degreeRS = null;
 
+                        boolean hasNext = false;
+
                         // Make a connection to the PostgreSQL datasource
                         try {
                             conn = DriverManager.getConnection(
@@ -48,11 +50,11 @@
                                 statementhegree = conn.prepareStatement(("SELECT degree_id, degree_type, total_units FROM degree WHERE degree_id = ?"));
                                 statementhegree.setString(1, request.getParameter("degree_id"));
 
-                                statementMissingClasses = conn.prepareStatement(("WITH earliest_classes AS (     SELECT course_number, year, quarter,            ROW_NUMBER() OVER (PARTITION BY course_number ORDER BY year,                   CASE                       WHEN quarter = 'Winter' THEN 0                       WHEN quarter = 'Spring' THEN 1                       WHEN quarter = 'Summer' THEN 2                       WHEN quarter = 'Fall' THEN 3                   END) AS rn     FROM classes     WHERE (year > 2024 OR (year = 2024 AND quarter IN ('Summer', 'Fall'))) ) SELECT c.degree_id,   c.category_name,   co.course_number AS courses,   MIN(TO_DATE(CONCAT(   CASE     WHEN cl.quarter = 'Fall' THEN 'September'     WHEN cl.quarter = 'Winter' THEN 'January'     WHEN cl.quarter = 'Spring' THEN 'March'     WHEN cl.quarter = 'Summer' THEN 'June' ELSE 'January'    END , ' ', cl.year), 'FMMonth YYYY')) AS next_offered_date  FROM category c   JOIN category_course cc ON c.category_id = cc.category_id   JOIN course co ON cc.course_number = co.course_number   LEFT JOIN earliest_classes cl   ON co.course_number = cl.course_number AND rn = 1 WHERE c.degree_id = ?   AND c.is_concentration = TRUE   AND NOT EXISTS (   SELECT 1 FROM enrolled e    WHERE e.course_number = co.course_number    AND e.PID = ?  ) GROUP BY c.degree_id, c.category_name, courses;"));
+                                statementMissingClasses = conn.prepareStatement(("WITH earliest_classes AS (     SELECT course_number, year, quarter,            ROW_NUMBER() OVER (PARTITION BY course_number ORDER BY year,                   CASE                       WHEN quarter = 'Winter' THEN 0                       WHEN quarter = 'Spring' THEN 1                       WHEN quarter = 'Summer' THEN 2                       WHEN quarter = 'Fall' THEN 3                   END) AS rn     FROM classes     WHERE (year > 2024 OR (year = 2024 AND quarter IN ('Summer', 'Fall'))) ) SELECT c.degree_id,   c.category_name,   co.course_number AS courses,   MIN(TO_DATE(CONCAT(   CASE     WHEN cl.quarter = 'Fall' THEN 'September'     WHEN cl.quarter = 'Winter' THEN 'January'     WHEN cl.quarter = 'Spring' THEN 'March'     WHEN cl.quarter = 'Summer' THEN 'June' ELSE 'January'    END , ' ', cl.year), 'FMMonth YYYY')) AS next_offered_date  FROM category c   JOIN category_course cc ON c.category_id = cc.category_id   JOIN course co ON cc.course_number = co.course_number   LEFT JOIN earliest_classes cl   ON co.course_number = cl.course_number AND rn = 1 WHERE c.degree_id = ?   AND c.is_concentration = TRUE   AND NOT EXISTS (   SELECT 1 FROM enrolled e    WHERE e.course_number = co.course_number    AND e.PID = ?  ) GROUP BY c.degree_id, c.category_name, courses ORDER BY c.category_name;"));
                                 statementMissingClasses.setString(1, request.getParameter("degree_id"));
                                 statementMissingClasses.setString(2, request.getParameter("PID"));
                                 // Check ECE twice
-                                statementCompleted = conn.prepareStatement(("SELECT c.degree_id, c.category_name, c.min_gpa, c.required_units, SUM(e.num_units) AS student_units, AVG(gr.NUMBER_GRADE) as student_gpa, SUM(e.num_units) >= c.required_units AND AVG(gr.NUMBER_GRADE) >= c.min_gpa as completed FROM category c JOIN category_course cc ON c.category_id = cc.category_id JOIN course co ON cc.course_number = co.course_number JOIN classes cl ON co.course_number = cl.course_number JOIN enrolled e ON e.course_number = cl.course_number AND e.section_id = cl.section_id AND e.PID = ? AND e.grade NOT IN ('F', 'S', 'U', 'Incomplete') JOIN grade_conversion gr ON CAST(e.grade AS CHAR(2)) = gr.LETTER_GRADE WHERE c.degree_id = ? AND c.is_concentration = TRUE GROUP BY c.degree_id, c.category_name, c.required_units, c.min_gpa;"));
+                                statementCompleted = conn.prepareStatement(("SELECT c.degree_id, c.category_name, c.min_gpa, c.required_units,  COALESCE(SUM(e.num_units), 0) AS student_units, COALESCE(AVG(gr.NUMBER_GRADE),0) as student_gpa,  SUM(e.num_units) >= c.required_units AND COALESCE(AVG(gr.NUMBER_GRADE),0) >= c.min_gpa as completed  FROM category c  LEFT JOIN category_course cc ON c.category_id = cc.category_id  LEFT JOIN course co ON cc.course_number = co.course_number  LEFT JOIN classes cl ON co.course_number = cl.course_number  LEFT JOIN enrolled e ON e.course_number = cl.course_number      AND e.section_id = cl.section_id AND e.PID = ?      AND e.grade NOT IN ('F', 'S', 'U', 'Incomplete')  LEFT JOIN grade_conversion gr ON CAST(e.grade AS CHAR(2)) = gr.LETTER_GRADE  WHERE c.degree_id = ? AND c.is_concentration = TRUE  GROUP BY c.degree_id, c.category_name, c.required_units, c.min_gpa ORDER BY c.category_name;"));
                                 statementCompleted.setString(2, request.getParameter("degree_id"));
                                 statementCompleted.setString(1, request.getParameter("PID"));
 
@@ -60,6 +62,8 @@
                                 rsDegree = statementhegree.executeQuery();
                                 rsMissingClasses = statementMissingClasses.executeQuery();
                                 rsCompleted = statementCompleted.executeQuery();
+
+                                hasNext = rsMissingClasses.next();
                             }
 
                             // for selecting PIDs
@@ -153,7 +157,8 @@
                             // Iterate over the ResultSet
                             String classOfferings = "";
                             SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd");
-                            while ( rsMissingClasses.next() && rsMissingClasses.getString("category_name").equals(category)) {
+                            while ( hasNext && rsMissingClasses.getString("category_name").equals(category)) {
+                                System.out.println(rsMissingClasses.getString("courses"));
                                 java.util.Date date = sdfInput.parse(rsMissingClasses.getString("next_offered_date"));
                                 if (date.getYear() < 0) {
                                     classOfferings += rsMissingClasses.getString("courses") + " has no offerings.";
@@ -177,6 +182,8 @@
                                         break;
                                 }
                                 classOfferings += ", ";
+
+                                hasNext = rsMissingClasses.next();
                             }
                             if (classOfferings == "") {
                                 classOfferings = "None";
