@@ -15,3 +15,4 @@ CREATE TABLE weekly_meeting (
     CHECK (end_date > start_date AND end_time > start_time)
 );
 
+-- cannot add lab work if lab is false in course
