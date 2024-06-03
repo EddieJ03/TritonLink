@@ -44,31 +44,29 @@ INSERT INTO prerequisite (course_number, prereq_course) VALUES
 
 -- insert classes
 INSERT INTO classes (section_id, course_number, title, quarter, year, enrollment_limit) VALUES
-('1', '1', 'DB System Principles', 'Spring', 2018, 30),
-('2', '2', 'Advanced Topics in CS', 'Fall', 2017, 30),
-('3', '3', 'Introduction to Programming', 'Winter', 2017, 30),
-('4', '4', 'Advanced Databases', 'Winter', 2018, 30),
-('5', '5', 'Machine Learning Algorithms', 'Spring', 2018, 30),
-('6', '6', 'Calculus I', 'Spring', 2017, 30),
-('7', '7', 'Physics I', 'Fall', 2017, 30),
-('8', '8', 'Introduction to Biology', 'Spring', 2017, 30),
-('9', '9', 'General Chemistry', 'Fall', 2017, 30),
-('10', '10', 'Introduction to Statistics', 'Winter', 2018, 30),
-('11', '1', 'DB System Principles 2', 'Fall', 2017, 30),
-('12', '12', 'Advanced Topics in Machine Learning 2', 'Winter', 2019, 30),
-('13', '11', 'Database System Applications', 'Spring', 2018, 30);
+('S1', '1', 'DB System Principles', 'Spring', 2018, 30),
+('S2', '2', 'Advanced Topics in CS', 'Fall', 2017, 30),
+('S3', '3', 'Introduction to Programming', 'Winter', 2017, 30),
+('S4', '4', 'Advanced Databases', 'Winter', 2018, 30),
+('S5', '5', 'Machine Learning Algorithms', 'Spring', 2018, 30),
+('S6', '6', 'Calculus I', 'Spring', 2017, 30),
+('S7', '7', 'Physics I', 'Fall', 2017, 30),
+('S8', '8', 'Introduction to Biology', 'Spring', 2017, 30),
+('S9', '9', 'General Chemistry', 'Fall', 2017, 30),
+('S10', '10', 'Introduction to Statistics', 'Winter', 2018, 30),
+('S11', '1', 'DB System Principles 2', 'Fall', 2017, 30),
+('S2', '12', 'Advanced Topics in Machine Learning 2', 'Winter', 2019, 30),
+('S13', '11', 'Database System Applications', 'Spring', 2018, 30);
 
--- insert enrolled
-INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
-('1', '2', '2', 'A', 4),
-('1', '3', '3', 'B+', 4),
-('2', '3', '3', 'B', 4),
-('1', '10', '10', 'A-', 4),
-('1', '11', '11', 'A', 4),
-('2', '2', '2', 'A-', 4),
-('1', '1', '1', NULL, 4),
-('2', '1', '1', NULL, 4),
-('2', '5', '5', NULL, 4);
+-- insert degrees
+INSERT INTO degrees (degree_id, degree_type, university, total_units) VALUES
+('BSC in Computer Science', 'Bachelor', 'Computer Science', 134),
+('MS in Computer Science', 'MS', 'Computer Science', 45),
+('BSC in Mathematics', 'Bachelor', 'Mathematics', 120),
+('BSC in Physics', 'Bachelor', 'Physics', 120),
+('BSC in Biology', 'Bachelor', 'Biology', 120),
+('BSC in Chemistry', 'Bachelor', 'Chemistry', 120),
+('BSC in Statistics', 'Bachelor', 'Statistics', 120);
 
 -- Insert weekly meeting
 INSERT INTO weekly_meeting (section_id, course_number, meeting_type, start_time, start_date, end_time, end_date, day_of_week, location) VALUES 
@@ -111,4 +109,29 @@ INSERT INTO weekly_meeting (section_id, course_number, meeting_type, start_time,
 ('S13', '13', 'LE', '11:00:00', '2018-03-01', '12:00:00', '2018-06-01', 'M', 'Room 113'),
 ('S13', '13', 'LE', '11:00:00', '2018-03-01', '12:00:00', '2018-06-01', 'W', 'Room 113'),
 ('S13', '13', 'LE', '11:00:00', '2018-03-01', '12:00:00', '2018-06-01', 'F', 'Room 113');
+
+
+-- insert enrolled
+INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
+('1', 'S2', '2', 'A', 4),
+('1', 'S3', '3', 'B+', 4),
+('2', 'S3', '3', 'B', 4),
+('3', 'S4', '4', 'A-', 4),
+('4', 'S6', '6', 'B+', 4),
+('5', 'S7', '7', 'A', 4),
+('6', 'S8', '8', 'A', 4),
+('7', 'S9', '9', 'B+', 4),
+('1', 'S10', '10', 'A-', 4),
+('1', 'S11', '11', 'A', 4),
+('2', 'S2', '2', 'A-', 4),
+('1', 'S1', '1', NULL, 4),
+('2', 'S1', '1', NULL, 4),
+('2', 'S5', '5', NULL, 4),
+('3', 'S1', '1', NULL, 4),
+('4', 'S1', '1', NULL, 4),
+('5', 'S1', '1', NULL, 4),
+('6', 'S1', '1', NULL, 4),
+('7', 'S1', '1', NULL, 4),
+('7', 'S3', '3', 'A', 4),
+('6', 'S3', '3', 'A', 4);
 
