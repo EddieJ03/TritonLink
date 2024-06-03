@@ -60,13 +60,13 @@ INSERT INTO classes (section_id, course_number, title, quarter, year, enrollment
 
 -- insert degrees
 INSERT INTO degrees (degree_id, degree_type, university, total_units) VALUES
-('BSC in Computer Science', 'Bachelor', 'Computer Science', 134),
-('MS in Computer Science', 'MS', 'Computer Science', 45),
-('BSC in Mathematics', 'Bachelor', 'Mathematics', 120),
-('BSC in Physics', 'Bachelor', 'Physics', 120),
-('BSC in Biology', 'Bachelor', 'Biology', 120),
-('BSC in Chemistry', 'Bachelor', 'Chemistry', 120),
-('BSC in Statistics', 'Bachelor', 'Statistics', 120);
+('BSC in Computer Science', 'Bachelor', 'UCSD', 134),
+('MS in Computer Science', 'MS', 'UCSD', 45),
+('BSC in Mathematics', 'Bachelor', 'UCSD', 120),
+('BSC in Physics', 'Bachelor', 'UCSD', 120),
+('BSC in Biology', 'Bachelor', 'UCSD', 120),
+('BSC in Chemistry', 'Bachelor', 'UCSD', 120),
+('BSC in Statistics', 'Bachelor', 'UCSD', 120);
 
 -- Insert weekly meeting
 INSERT INTO weekly_meeting (section_id, course_number, meeting_type, start_time, start_date, end_time, end_date, day_of_week, location) VALUES 
