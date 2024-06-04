@@ -86,7 +86,7 @@
                                         <%
                                             while(degreeRS.next()) {
                                         %>
-                                                <option value=<%= degreeRS.getString("degree_id") %> <%=degreeRS.getString("degree_id").equals(request.getParameter("degree_id")) ? "selected" : "" %>><%= degreeRS.getString("degree_id") %></option>
+                                                <option value='<%= degreeRS.getString("degree_id") %>' <%=degreeRS.getString("degree_id").equals(request.getParameter("degree_id")) ? "selected" : "" %>><%= degreeRS.getString("degree_id") %></option>
                                         <%
                                             }
                                         %>

@@ -97,7 +97,7 @@
                                         <%
                                             while(degreeRS.next()) {
                                         %>
-                                                <option value=<%= degreeRS.getString("degree_id") %> <%=degreeRS.getString("degree_id").equals(request.getParameter("degree_id")) ? "selected" : "" %>><%= degreeRS.getString("degree_id") %></option>
+                                                <option value='<%= degreeRS.getString("degree_id") %>' <%=degreeRS.getString("degree_id").equals(request.getParameter("degree_id")) ? "selected" : "" %>><%= degreeRS.getString("degree_id") %></option>
                                         <%
                                             }
                                         %>
@@ -158,7 +158,6 @@
                             String classOfferings = "";
                             SimpleDateFormat sdfInput = new SimpleDateFormat("yyyy-MM-dd");
                             while ( hasNext && rsMissingClasses.getString("category_name").equals(category)) {
-                                System.out.println(rsMissingClasses.getString("courses"));
                                 java.util.Date date = sdfInput.parse(rsMissingClasses.getString("next_offered_date"));
                                 if (date.getYear() < 0) {
                                     classOfferings += rsMissingClasses.getString("courses") + " has no offerings.";

@@ -86,7 +86,21 @@ INSERT INTO course (course_number, department, min_unit, max_unit, letter_grade,
 INSERT INTO category_course (course_number, category_id) VALUES 
 ('CSE291', 'Machine Learning'), 
 ('CSE232A', 'Machine Learning'), 
-('CSE291B', 'Machine Learning');
+('CSE291B', 'Machine Learning'),
+('CSE132A', '2'),
+('CSE291', '3'),
+('CSE101', '1'),
+('CSE132B', '2'),
+('CSE132B', '3'),
+('CSE232A', '3'),
+('MATH101', '4'),
+('PHYS101', '7'),
+('BIO101', '10'),
+('CHEM101', '13'),
+('STAT101', '16'),
+('CSE132C', '1'),
+('CSE291B', '1');
+
 
 -- Insert Prerequisites
 INSERT INTO prerequisite (course_number, prereq_course) VALUES 
