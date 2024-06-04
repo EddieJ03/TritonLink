@@ -21,6 +21,21 @@ INSERT INTO undergraduate (PID, college, major, minor) VALUES
 INSERT INTO graduate (PID, department, grad_type) VALUES
 ('2', 'CSE', 'PhD');
 
+-- insert faculty
+INSERT INTO faculty (name, title, department) VALUES
+('Dr. Alan Turing', 'Professor', 'Computer Science'),
+('Dr. Ada Lovelace', 'Professor', 'Computer Science'),
+('Dr. Andrew Ng', 'Professor', 'Computer Science'),
+('Dr. Geoffrey Hinton', 'Professor', 'Computer Science'),
+('Dr. Carl Gauss', 'Professor', 'Mathematics'),
+('Dr. Albert Einstein', 'Professor', 'Physics'),
+('Dr. James Watson', 'Professor', 'Biology'),
+('Dr. Marie Curie', 'Professor', 'Chemistry'),
+('Dr. John Tukey', 'Professor', 'Statistics'),
+('Dr. Ian Goodfellow', 'Professor', 'Computer Science'),
+('Dr. Alin D', 'Professor', 'Computer Science');
+
+
 -- Insert courses
 INSERT INTO course (course_number, department, min_unit, max_unit, letter_grade, S_or_U, lab_work, instructor_consent) VALUES 
 ('CSE132A', 'Computer Science', 4, 4, TRUE, FALSE, TRUE, FALSE),
