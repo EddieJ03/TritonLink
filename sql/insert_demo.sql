@@ -38,12 +38,12 @@ INSERT INTO faculty (name, title, department) VALUES
 
 -- insert concentration
 INSERT INTO category (
-    category_id VARCHAR(20) PRIMARY KEY,
-    degree_id VARCHAR(20),
-    category_name VARCHAR(100),
-    min_gpa FLOAT NOT NULL CHECK (min_gpa >= 0),
-    required_units INTEGER NOT NULL CHECK (required_units > 0),
-    is_concentration BOOLEAN
+    category_id,
+    degree_id,
+    category_name,
+    min_gpa,
+    required_units,
+    is_concentration 
 ) VALUES (
     "Machine Learning",
     "MS in Computer Science",
@@ -54,16 +54,17 @@ INSERT INTO category (
 );
 
 -- insert into category course
-INSERT INTO category_course (
-    course_number VARCHAR(50),
-    category_id VARCHAR(20),
-) VALUES (
+INSERT INTO category_course (course_number, category_id) 
+VALUES 
+(
     "CSE291",
     "Machine Learning"
-),VALUES (
+), 
+(
     "CSE232A",
     "Machine Learning"
-),VALUES (
+), 
+(
     "CSE291B",
     "Machine Learning"
 );
