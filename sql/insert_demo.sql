@@ -36,6 +36,38 @@ INSERT INTO faculty (name, title, department) VALUES
 ('Dr. Alin D', 'Professor', 'Computer Science');
 
 
+-- insert concentration
+INSERT INTO category (
+    category_id VARCHAR(20) PRIMARY KEY,
+    degree_id VARCHAR(20),
+    category_name VARCHAR(100),
+    min_gpa FLOAT NOT NULL CHECK (min_gpa >= 0),
+    required_units INTEGER NOT NULL CHECK (required_units > 0),
+    is_concentration BOOLEAN
+) VALUES (
+    "Machine Learning",
+    "MS in Computer Science",
+    "Machine Learning",
+    3,
+    12,
+    TRUE
+);
+
+-- insert into category course
+INSERT INTO category_course (
+    course_number VARCHAR(50),
+    category_id VARCHAR(20),
+) VALUES (
+    "CSE291",
+    "Machine Learning"
+),VALUES (
+    "CSE232A",
+    "Machine Learning"
+),VALUES (
+    "CSE291B",
+    "Machine Learning"
+);
+
 -- Insert courses
 INSERT INTO course (course_number, department, min_unit, max_unit, letter_grade, S_or_U, lab_work, instructor_consent) VALUES 
 ('CSE132A', 'Computer Science', 4, 4, TRUE, FALSE, TRUE, FALSE),
