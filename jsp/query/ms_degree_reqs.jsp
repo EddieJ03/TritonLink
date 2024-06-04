@@ -161,6 +161,7 @@
                                 java.util.Date date = sdfInput.parse(rsMissingClasses.getString("next_offered_date"));
                                 if (date.getYear() < 0) {
                                     classOfferings += rsMissingClasses.getString("courses") + " has no offerings.";
+                                    hasNext = rsMissingClasses.next();
                                     continue;
                                 } else {
                                     classOfferings += rsMissingClasses.getString("courses") + " offered ";
