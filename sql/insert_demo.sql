@@ -181,7 +181,7 @@ INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('1', 'S10', 'STAT101', 'A-', 4),
 ('1', 'S11', 'CSE132A', 'A', 4),
 ('2', 'S2', 'CSE291', 'A-', 4),
-('1', 'S1', 'CSE132A', 'Incomplete', 4),
+-- ('1', 'S1', 'CSE132A', 'Incomplete', 4),
 ('2', 'S1', 'CSE132A', 'Incomplete', 4),
 ('2', 'S5', 'CSE232A', 'Incomplete', 4),
 ('3', 'S1', 'CSE132A', 'Incomplete', 4),

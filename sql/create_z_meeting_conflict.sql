@@ -126,7 +126,7 @@ BEGIN
         CurrentTeachingMeetings AS (
             SELECT t.section_id as section_id, wm1.start_time as start_time, wm1.end_time as end_time, t.course_number as course_number, wm1.day_of_week as day_of_week, wm1.meeting_type as meeting_type FROM teaches t
             JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
-            JOIN classes cl ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
+            JOIN classes cl ON cl.section_id = wm1.section_id AND cl.course_number = wm1.course_number
             WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) AND cl.quarter = (SELECT quarter FROM classes cla WHERE NEW.section_id = cla.section_id) AND cl.year = (SELECT year FROM classes cla WHERE NEW.section_id = cla.section_id) 
         )
 
