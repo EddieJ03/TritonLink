@@ -9,3 +9,5 @@ CREATE TABLE student (
     enrolled BOOLEAN,
     residency residency_enum
 );
+
+-- don't allow actions if not enrolled

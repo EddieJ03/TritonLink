@@ -5,6 +5,6 @@ CREATE TABLE prerequisite (
     FOREIGN KEY (prereq_course) REFERENCES course(course_number) ON DELETE CASCADE
 );
 
-
+-- make sure that studets cannot enroll without prereqs
 
 

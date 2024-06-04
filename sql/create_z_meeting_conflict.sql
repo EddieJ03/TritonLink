@@ -6,9 +6,11 @@ DECLARE
     conflicting_weekly_review_meeting_b VARCHAR(20);
 BEGIN
     -- Check for weekly meeting conflicts
+    -- RAISE EXCEPTION 'Test %', (SELECT year FROM classes cl WHERE NEW.section_id = cl.section_id);
+
     SELECT wm1.section_id, NEW.section_id INTO conflicting_weekly_meeting_a, conflicting_weekly_meeting_b
-        FROM weekly_meeting wm1
-        WHERE wm1.day_of_week = NEW.day_of_week 
+        FROM weekly_meeting wm1 JOIN classes cl ON wm1.section_id = cl.section_id AND wm1.course_number = cl.course_number
+        WHERE wm1.day_of_week = NEW.day_of_week AND cl.quarter = (SELECT quarter FROM classes cla WHERE NEW.section_id = cla.section_id) AND cl.year = (SELECT year FROM classes cla WHERE NEW.section_id = cla.section_id)
             AND (
                 (NEW.section_id = wm1.section_id AND wm1.meeting_type <> NEW.meeting_type) 
                 OR (NEW.section_id <> wm1.section_id AND wm1.location = NEW.location)
@@ -124,7 +126,8 @@ BEGIN
         CurrentTeachingMeetings AS (
             SELECT t.section_id as section_id, wm1.start_time as start_time, wm1.end_time as end_time, t.course_number as course_number, wm1.day_of_week as day_of_week, wm1.meeting_type as meeting_type FROM teaches t
             JOIN weekly_meeting wm1 ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
-            WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) 
+            JOIN classes cl ON t.section_id = wm1.section_id AND t.course_number = wm1.course_number
+            WHERE t.faculty_name = (SELECT faculty_name FROM prof_name) AND cl.quarter = (SELECT quarter FROM classes cla WHERE NEW.section_id = cla.section_id) AND cl.year = (SELECT year FROM classes cla WHERE NEW.section_id = cla.section_id) 
         )
 
         /*
