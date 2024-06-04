@@ -12,8 +12,9 @@ CREATE TABLE enrolled (
     FOREIGN KEY (course_number) REFERENCES course(course_number) ON DELETE CASCADE
 );
 
+
 -- Create function to check enrollment limit
-CREATE OR REPLACE FUNCTION check_enrollment_limit()
+CREATE OR REPLACE FUNCTION check_enrollment()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Check the current number of students enrolled in the class
@@ -38,6 +39,10 @@ BEGIN
         RAISE EXCEPTION 'STUDENT HAS ALREADY ENROLLED IN COURSE %', NEW.course_number;
     END IF;
 
+    IF NEW.course_number NOT IN (SELECT prereq_course FROM prerequisite WHERE course_number = NEW.course_number)
+    THEN RAISE EXCEPTION 'PreReq not satisfied for %', NEW.course_number;
+    END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -46,4 +51,4 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER check_enrollment_before_insert
 BEFORE INSERT ON enrolled
 FOR EACH ROW
-EXECUTE FUNCTION check_enrollment_limit();
+EXECUTE FUNCTION check_enrollment();
