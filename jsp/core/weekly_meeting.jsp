@@ -132,7 +132,7 @@
                                         <option value="Tue">Tuesday</option>
                                         <option value="Wed">Wednesday</option>
                                         <option value="Thu">Thursday</option>
-                                        <option value="Fr">Friday</option>
+                                        <option value="Fri">Friday</option>
                                         <option value="Sat">Saturday</option>
                                         <option value="Sun">Sunday</option>
                                     </select>
