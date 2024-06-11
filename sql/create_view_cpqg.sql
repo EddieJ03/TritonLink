@@ -55,8 +55,8 @@ BEGIN
         SELECT FROM CPQG c 
         WHERE NEW.course_number = c.course_number 
             AND c.faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id) 
-            AND c.quarter = (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
-            AND c.year = (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+            AND c.quarter = (SELECT DISTINCT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+            AND c.year = (SELECT DISTINCT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
         ) THEN
         UPDATE CPQG SET 
         A = (
@@ -76,8 +76,8 @@ BEGIN
         )
         WHERE course_number = NEW.course_number 
             AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id) 
-            AND quarter = (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
-            AND year = (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id);
+            AND quarter = (SELECT DISTINCT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+            AND year = (SELECT DISTINCT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id);
 
         -- SUBTRACT FROM OLD
         UPDATE CPQG SET 
@@ -98,12 +98,12 @@ BEGIN
         )
         WHERE course_number = OLD.course_number 
             AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = OLD.course_number AND t.section_id = OLD.section_id)
-            AND quarter = (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
-            AND year = (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id);
+            AND quarter = (SELECT DISTINCT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+            AND year = (SELECT DISTINCT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id);
 
         RETURN NEW;
     ELSE
-        INSERT INTO CPQG VALUES((SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id), NEW.course_number, (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id), (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id), 0, 0, 0, 0, 0);
+        INSERT INTO CPQG VALUES((SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id), NEW.course_number, (SELECT DISTINCT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id), (SELECT DISTINCT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id), 0, 0, 0, 0, 0);
 
         UPDATE CPQG SET 
         A = (
@@ -121,8 +121,8 @@ BEGIN
         other = (
             CASE WHEN NEW.grade IN ('F', 'S','U') THEN other + 1 ELSE other END
         )
-        WHERE course_number = NEW.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id) AND quarter = (SELECT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
-            AND year = (SELECT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id);
+        WHERE course_number = NEW.course_number AND faculty_name = (SELECT faculty_name FROM teaches t WHERE t.course_number = NEW.course_number AND t.section_id = NEW.section_id) AND quarter = (SELECT DISTINCT quarter FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id)
+            AND year = (SELECT DISTINCT year FROM classes cl WHERE cl.course_number = NEW.course_number AND cl.section_id = NEW.section_id);
 
         RETURN NEW;
     END IF;
