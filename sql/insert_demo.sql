@@ -99,7 +99,13 @@ INSERT INTO category_course (course_number, category_id) VALUES
 ('CHEM101', '13'),
 ('STAT101', '16'),
 ('CSE132C', '1'),
-('CSE291B', '1');
+('CSE291B', '1'),
+('MATH101', '1'),
+('PHYS101', '1'),
+('BIO101', '1'),
+('CHEM101', '1'),
+('STAT101', '1'),
+('CSE132A', '1');
 
 
 -- Insert Prerequisites
@@ -188,6 +194,9 @@ INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('1', 'S3', 'CSE101', 'B+', 4),
 ('2', 'S3', 'CSE101', 'B', 4),
 ('3', 'S4', 'CSE132B', 'A-', 4),
+('1', 'S4', 'CSE132B', 'B-', 4),
+('6', 'S4', 'CSE132B', 'Incomplete', 4),
+('7', 'S4', 'CSE132B', 'B-', 4),
 ('4', 'S6', 'MATH101', 'B+', 4),
 ('5', 'S7', 'PHYS101', 'A', 4),
 ('6', 'S8', 'BIO101', 'A', 4),
