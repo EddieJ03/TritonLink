@@ -39,11 +39,11 @@ BEGIN
         RAISE EXCEPTION 'STUDENT HAS ALREADY ENROLLED IN COURSE %', NEW.course_number;
     END IF;
 
-    IF EXISTS (
-        (SELECT prereq_course FROM prerequisite WHERE course_number = NEW.course_number) EXCEPT (SELECT course_number FROM enrolled e WHERE e.PID = NEW.PID)
-    )
-    THEN RAISE EXCEPTION 'A prereq not satisfied for %', NEW.course_number;
-    END IF;
+    -- IF EXISTS (
+    --     (SELECT prereq_course FROM prerequisite WHERE course_number = NEW.course_number) EXCEPT (SELECT course_number FROM enrolled e WHERE e.PID = NEW.PID)
+    -- )
+    -- THEN RAISE EXCEPTION 'A prereq not satisfied for %', NEW.course_number;
+    -- END IF;
 
     RETURN NEW;
 END;

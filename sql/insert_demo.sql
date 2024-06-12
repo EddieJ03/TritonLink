@@ -6,7 +6,9 @@ INSERT INTO student (PID, first_name, middle_name, last_name, ssn, enrolled, res
 ('4', 'Bob', 'D', 'Brown', '234-56-7890', TRUE, NULL),
 ('5', 'Carol', 'E', 'Davis', '345-67-8901', TRUE, NULL),
 ('6', 'David', 'Fri', 'Miller', '456-78-9012', TRUE, NULL),
-('7', 'Eve', 'G', 'Wilson', '567-89-0123', TRUE, NULL);
+('7', 'Eve', 'G', 'Wilson', '567-89-0123', TRUE, NULL),
+('8', 'Vincent', 'N ', 'Terry', '737-69-0125', TRUE, NULL);
+
 
 -- insert undergrad
 INSERT INTO undergraduate (PID, college, major, minor) VALUES
@@ -15,7 +17,8 @@ INSERT INTO undergraduate (PID, college, major, minor) VALUES
 ('4', 'Sixth', 'Computer Science', 'Statistics'),
 ('5', 'ERC', 'Computer Science', 'Statistics'),
 ('6', 'Marshall', 'Computer Science', 'Statistics'),
-('7', 'Revelle', 'Computer Science', 'Statistics');
+('7', 'Revelle', 'Computer Science', 'Statistics'),
+('8', 'Revelle', 'Computer Science', 'Statistics');
 
 -- insert graduate
 INSERT INTO graduate (PID, department, grad_type) VALUES
@@ -116,19 +119,19 @@ INSERT INTO prerequisite (course_number, prereq_course) VALUES
 
 -- insert classes
 INSERT INTO classes (section_id, course_number, title, quarter, year, enrollment_limit) VALUES
-('S1', 'CSE132A', 'DB System Principles', 'Spring', 2018, 30),
-('S2', 'CSE291', 'Advanced Topics in CS', 'Fall', 2017, 30),
-('S3', 'CSE101', 'Introduction to Programming', 'Winter', 2017, 30),
-('S4', 'CSE132B', 'Advanced Databases', 'Winter', 2018, 30),
-('S5', 'CSE232A', 'Machine Learning Algorithms', 'Spring', 2018, 30),
-('S6', 'MATH101', 'Calculus I', 'Spring', 2017, 30),
-('S7', 'PHYS101', 'Physics I', 'Fall', 2017, 30),
-('S8', 'BIO101', 'Introduction to Biology', 'Spring', 2017, 30),
-('S9', 'CHEM101', 'General Chemistry', 'Fall', 2017, 30),
-('S10', 'STAT101', 'Introduction to Statistics', 'Winter', 2018, 30),
-('S11', 'CSE132A', 'DB System Principles 2', 'Fall', 2017, 30),
-('S12', 'CSE291B', 'Advanced Topics in Machine Learning 2', 'Winter', 2019, 30),
-('S13', 'CSE132C', 'Database System Applications', 'Spring', 2018, 30);
+('S1', 'CSE132A', 'DB System Principles', 'Spring', 2018, 7),
+('S2', 'CSE291', 'Advanced Topics in CS', 'Fall', 2017, 7),
+('S3', 'CSE101', 'Introduction to Programming', 'Winter', 2017, 7),
+('S4', 'CSE132B', 'Advanced Databases', 'Winter', 2018, 7),
+('S5', 'CSE232A', 'Machine Learning Algorithms', 'Spring', 2018, 7),
+('S6', 'MATH101', 'Calculus I', 'Spring', 2017, 7),
+('S7', 'PHYS101', 'Physics I', 'Fall', 2017, 7),
+('S8', 'BIO101', 'Introduction to Biology', 'Spring', 2017, 7),
+('S9', 'CHEM101', 'General Chemistry', 'Fall', 2017, 7),
+('S10', 'STAT101', 'Introduction to Statistics', 'Winter', 2018, 7),
+('S11', 'CSE132A', 'DB System Principles 2', 'Fall', 2017, 7),
+('S12', 'CSE291B', 'Advanced Topics in Machine Learning 2', 'Winter', 2019, 7),
+('S13', 'CSE132C', 'Database System Applications', 'Spring', 2018, 7);
 
 -- insert teaches
 INSERT INTO teaches (faculty_name, section_id, course_number) VALUES
@@ -193,6 +196,17 @@ INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('1', 'S2', 'CSE291', 'A', 4),
 ('1', 'S3', 'CSE101', 'B+', 4),
 ('2', 'S3', 'CSE101', 'B', 4),
+('7', 'S3', 'CSE101', 'A', 4),
+('6', 'S3', 'CSE101', 'A', 4),
+-- ('1', 'S11', 'CSE132A', 'A', 4),
+('1', 'S1', 'CSE132A', 'Incomplete', 4),
+('2', 'S1', 'CSE132A', 'Incomplete', 4),
+('2', 'S5', 'CSE232A', 'Incomplete', 4),
+('3', 'S1', 'CSE132A', 'Incomplete', 4),
+('4', 'S1', 'CSE132A', 'Incomplete', 4),
+('5', 'S1', 'CSE132A', 'Incomplete', 4),
+('6', 'S1', 'CSE132A', 'Incomplete', 4),
+('7', 'S1', 'CSE132A', 'Incomplete', 4),
 ('3', 'S4', 'CSE132B', 'A-', 4),
 ('1', 'S4', 'CSE132B', 'B-', 4),
 ('6', 'S4', 'CSE132B', 'Incomplete', 4),
@@ -202,16 +216,6 @@ INSERT INTO enrolled (PID, section_id, course_number, grade, num_units) VALUES
 ('6', 'S8', 'BIO101', 'A', 4),
 ('7', 'S9', 'CHEM101', 'B+', 4),
 ('1', 'S10', 'STAT101', 'A-', 4),
-('1', 'S11', 'CSE132A', 'A', 4),
-('2', 'S2', 'CSE291', 'A-', 4),
--- ('1', 'S1', 'CSE132A', 'Incomplete', 4),
-('2', 'S1', 'CSE132A', 'Incomplete', 4),
-('2', 'S5', 'CSE232A', 'Incomplete', 4),
-('3', 'S1', 'CSE132A', 'Incomplete', 4),
-('4', 'S1', 'CSE132A', 'Incomplete', 4),
-('5', 'S1', 'CSE132A', 'Incomplete', 4),
-('6', 'S1', 'CSE132A', 'Incomplete', 4),
-('7', 'S1', 'CSE132A', 'Incomplete', 4),
-('7', 'S3', 'CSE101', 'A', 4),
-('6', 'S3', 'CSE101', 'A', 4);
+('2', 'S2', 'CSE291', 'A-', 4);
+
 
