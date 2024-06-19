@@ -1,4 +1,4 @@
-# CSE132B_database
+# TritonLinkDB
 
 1. To run the repo, clone into the `webapps/` folder in the apache-tomcat folder.
 
